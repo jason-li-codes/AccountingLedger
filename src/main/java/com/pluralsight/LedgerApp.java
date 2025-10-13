@@ -8,6 +8,8 @@ public class LedgerApp {
 
     public static Scanner input = new Scanner(System.in);
 
+    public static ArrayList<Transaction> fullLedger = new ArrayList<>();
+
     public static void main(String[] args) {
 
         System.out.println("Welcome to your Accounting Ledger App!");
@@ -22,32 +24,34 @@ public class LedgerApp {
                     (I) More info
                     (X) Exit program""");
 
-            String menuOption = getValidChar(new ArrayList<String>(Arrays.asList("D", "P", "L", "I", "X")));
+            char menuOption = getValidChar(new ArrayList<Character>(Arrays.asList('D', 'P', 'L', 'I', 'X')));
 
             switch (menuOption) {
-                case "D":
+                case 'D':
                     addDeposit();
                     break;
-                case "P":
+                case 'P':
                     addPayment();
                     break;
-                case "L":
+                case 'L':
                     viewLedger();
                     break;
-                case "I":
+                case 'I':
                     moreInfo();
                     break;
-                case "X":
+                case 'X':
                     System.out.println("EXITING PROGRAM...");
                     isRunning = false;
             }
         }
     }
 
-    public static String getValidChar(ArrayList<String> validMenuOptions) {
+
+
+    public static char getValidChar(ArrayList<Character> validMenuOptions) {
 
         // initializes inputChar and boolean badInput
-        String inputChar = "";
+        char inputChar = ' ';
         boolean badInput = false;
 
         // uses do/while loop
@@ -56,14 +60,14 @@ public class LedgerApp {
             badInput = false;
             //tries to get an input
             try {
-                inputChar = String.valueOf(input.nextLine().trim().charAt(0));
-                if (!validMenuOptions.contains(inputChar)) {
-                    System.out.println("Sorry, I don't recognize that option, let's try again.");
+                inputChar = input.nextLine().trim().charAt(0);
+                if (!validMenuOptions.contains(Character.toUpperCase(inputChar))) {
+                    System.out.println("Sorry, I don't recognize that option, please try again.");
                     badInput = true;
                 }
                 // if it can't read as a valid menu option, catches exception and sets badInput to true to try again
             } catch (Exception e) {
-                System.out.println("Sorry I don't know what you mean, let's try again.");
+                System.out.println("Sorry I don't know what you mean, please try again.");
                 badInput = true;
             }
             // conditional checks badInput boolean
