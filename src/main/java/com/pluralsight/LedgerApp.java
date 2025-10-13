@@ -1,12 +1,11 @@
 package com.pluralsight;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class LedgerApp {
@@ -31,7 +30,7 @@ public class LedgerApp {
                     (I) More info
                     (X) Exit program""");
 
-            char menuOption = getValidMenuChar(new ArrayList<Character>(Arrays.asList('D', 'P', 'L', 'I', 'X')));
+            char menuOption = getValidMenuChar(Set.of('D', 'P', 'L', 'I', 'X'));
 
             switch (menuOption) {
                 case 'D':
@@ -49,8 +48,33 @@ public class LedgerApp {
                 case 'X':
                     System.out.println("EXITING PROGRAM...");
                     isRunning = false;
+                    break;
             }
         }
+    }
+
+    public static void addDeposit() {
+
+        boolean isRunning = true;
+        do {
+            System.out.println("Let's get info on this deposit.");
+            String inputDate = getValidString();
+            String inputTime = getValidString();
+            String inputDscrptn = getValidString();
+            String inputVendor = getValidString();
+            Double inputAmount = getValidDouble();
+
+            System.out.println("Transaction added successfully.");
+            System.out.println("""
+                    Would you like to add another?
+                    (Y) Yes, add another deposit
+                    (N) No, return to main menu""");
+
+            char menuOption = getValidMenuChar();
+
+        } while (isRunning);
+
+
     }
 
     public static void loadLedger(String fileName) {
@@ -128,6 +152,40 @@ public class LedgerApp {
         return fileName;
     }
 
+    public static double getValidDouble() {
+
+        // initializes inputDouble and boolean badInput
+        double inputDouble = 0;
+        boolean badInput = false;
+
+        // uses do/while loop
+        do {
+
+            // sets badInput to false first
+            badInput = false;
+
+            //tries to get a double
+            try {
+                inputDouble = input.nextDouble();
+                // if it can't read as double, throws exception with error message and sets badInput to try again
+                if (BigDecimal.valueOf(inputDouble).scale() > 2) {
+                    inputDouble = BigDecimal.valueOf(inputDouble).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    System.out.printf("Your input has been rounded to $%.2f.", inputDouble);
+                }
+
+            } catch (Exception e) {
+                System.out.println("Sorry I don't know what you mean, please try again.");
+                badInput = true;
+            }
+            // eats buffer
+            input.nextLine();
+            // conditional checks badInput boolean
+        } while (badInput);
+
+        // returns the correct inputNumber as a double
+        return inputDouble;
+    }
+
     public static String getValidString() {
 
         String string;
@@ -146,7 +204,7 @@ public class LedgerApp {
         return string;
     }
 
-    public static char getValidMenuChar(ArrayList<Character> validMenuOptions) {
+    public static char getValidMenuChar(Set<Character> validMenuOptions) {
 
         // initializes inputChar and boolean badInput
         char inputChar = ' ';
