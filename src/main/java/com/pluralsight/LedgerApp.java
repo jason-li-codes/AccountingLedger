@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 
@@ -169,9 +170,9 @@ public class LedgerApp {
     public static LocalDate getValidDate() {
 
         // initializes inputDouble and boolean badInput
-        LocalDate inputDate = LocalDate.parse("");
-        boolean badInput = false;
+        LocalDate inputDate;
 
+        boolean badInput = false;
         // uses do/while loop
         do {
             // sets badInput to false first
@@ -180,29 +181,26 @@ public class LedgerApp {
             if (Character.toUpperCase(input.nextLine().trim().charAt(0)) == 'N') {
                 inputDate = LocalDate.now();
                 System.out.println("Date set as current date, " + inputDate);
+                return inputDate;
             } else {
-                //tries to get a date
-                try {
-                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("M/d/yy");
-                    inputDate = LocalDate.parse(input.nextLine().trim(), inputFormatter);
-                    // if it can't read as LocalDate, throws exception with error message and sets badInput to try again
-                    if () {
-
+                Set<DateTimeFormatter> dateFormatters = Set.of(
+                        DateTimeFormatter.ofPattern("M/d/yy"),
+                        DateTimeFormatter.ofPattern("MM/dd/yy"),
+                        DateTimeFormatter.ofPattern("M/d/yyyy"),
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
+                );
+                //tries to match the inputDate with the list dateFormatters
+                for (DateTimeFormatter formatter : dateFormatters) {
+                    try {
+                        return LocalDate.parse(inputDate, formatter);
+                    } catch (DateTimeParseException e) {
+                        // tries the next format
                     }
-
-                } catch (Exception e) {
-                    System.out.println("Sorry I can't read that date, please try again.");
-                    badInput = true;
                 }
+
             }
-            // eats buffer
-            input.nextLine();
             // conditional checks badInput boolean
         } while (badInput);
-
-        // returns the correct inputNumber as a double
-        return inputDouble;
-
     }
 
     public static double getValidDouble() {
