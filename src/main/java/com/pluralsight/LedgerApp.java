@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -58,11 +59,18 @@ public class LedgerApp {
         boolean isRunning = true;
         do {
             System.out.println("Let's get info on this deposit.");
-            String inputDate = getValidString();
-            String inputTime = getValidString();
+            System.out.print("Enter deposit date (MM/dd/yyyy), or N for \'now\': ");
+            String inputDate = getValidDate();
+            System.out.print("Enter transaction time: ");
+            String inputTime = getValidTime();
+            System.out.print("Enter deposit description: ");
             String inputDscrptn = getValidString();
+            System.out.print("Enter deposit vendor: ");
             String inputVendor = getValidString();
+            System.out.print("Enter deposit amount: ");
             Double inputAmount = getValidDouble();
+
+            openLedger.add(new Transaction(inputDate, inputTime, inputDscrptn, inputVendor, inputAmount));
 
             System.out.println("Transaction added successfully.");
             System.out.println("""
@@ -70,7 +78,11 @@ public class LedgerApp {
                     (Y) Yes, add another deposit
                     (N) No, return to main menu""");
 
-            char menuOption = getValidMenuChar();
+            char menuOption = getValidMenuChar(Set.of('Y', 'N'));
+            if (menuOption == 'N') {
+                System.out.println("Returning to main menu...");
+                isRunning = false;
+            }
 
         } while (isRunning);
 
@@ -78,6 +90,8 @@ public class LedgerApp {
     }
 
     public static void loadLedger(String fileName) {
+
+        System.out.printf("Opening %s....", fileName);
 
         try (BufferedReader bufReader = new BufferedReader(new FileReader(fileName))) {
             // eats the first line because it is a label of file columns
@@ -148,8 +162,47 @@ public class LedgerApp {
 
         } while (badInput);
 
-        System.out.printf("Welcome to your Accounting Ledger App, %s! Opening %s...\n", name, fileName);
+        System.out.printf("Welcome to your Accounting Ledger, %s! ", name);
         return fileName;
+    }
+
+    public static LocalDate getValidDate() {
+
+        // initializes inputDouble and boolean badInput
+        LocalDate inputDate = LocalDate.parse("");
+        boolean badInput = false;
+
+        // uses do/while loop
+        do {
+            // sets badInput to false first
+            badInput = false;
+            // if input contains letter N at the start, assume LocalDate is now
+            if (Character.toUpperCase(input.nextLine().trim().charAt(0)) == 'N') {
+                inputDate = LocalDate.now();
+                System.out.println("Date set as current date, " + inputDate);
+            } else {
+                //tries to get a date
+                try {
+                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("M/d/yy");
+                    inputDate = LocalDate.parse(input.nextLine().trim(), inputFormatter);
+                    // if it can't read as LocalDate, throws exception with error message and sets badInput to try again
+                    if () {
+
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Sorry I can't read that date, please try again.");
+                    badInput = true;
+                }
+            }
+            // eats buffer
+            input.nextLine();
+            // conditional checks badInput boolean
+        } while (badInput);
+
+        // returns the correct inputNumber as a double
+        return inputDouble;
+
     }
 
     public static double getValidDouble() {
@@ -167,12 +220,12 @@ public class LedgerApp {
             //tries to get a double
             try {
                 inputDouble = input.nextDouble();
-                // if it can't read as double, throws exception with error message and sets badInput to try again
+                // if input is a double but has too many decimal points, rounds it and informs user
                 if (BigDecimal.valueOf(inputDouble).scale() > 2) {
                     inputDouble = BigDecimal.valueOf(inputDouble).setScale(2, RoundingMode.HALF_UP).doubleValue();
                     System.out.printf("Your input has been rounded to $%.2f.", inputDouble);
                 }
-
+                // if it can't read as double, throws exception with error message and sets badInput to try again
             } catch (Exception e) {
                 System.out.println("Sorry I don't know what you mean, please try again.");
                 badInput = true;
@@ -182,7 +235,7 @@ public class LedgerApp {
             // conditional checks badInput boolean
         } while (badInput);
 
-        // returns the correct inputNumber as a double
+        // returns the correct inputDouble as a double
         return inputDouble;
     }
 
@@ -216,12 +269,14 @@ public class LedgerApp {
             badInput = false;
             //tries to get an input
             try {
-                inputChar = input.nextLine().trim().charAt(0);
-                if (!validMenuOptions.contains(Character.toUpperCase(inputChar))) {
+                // takes uppercase first character of user input
+                inputChar = Character.toUpperCase(input.nextLine().trim().charAt(0));
+                // if input does not match Set of characters in method parameters, asks for another attempt
+                if (!validMenuOptions.contains(inputChar)) {
                     System.out.println("Sorry, I don't recognize that option, please try again.");
                     badInput = true;
                 }
-                // if it can't read as a valid menu option, catches exception and sets badInput to true to try again
+                // if it can't read as a valid char, catches exception and sets badInput to true to try again
             } catch (Exception e) {
                 System.out.println("Sorry I don't know what you mean, please try again.");
                 badInput = true;
@@ -229,7 +284,7 @@ public class LedgerApp {
             // conditional checks badInput boolean
         } while (badInput);
 
-        // returns the correct inputChar as a String of one character
+        // returns the correct inputChar as an uppercase char
         return inputChar;
     }
 
