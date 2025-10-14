@@ -55,6 +55,87 @@ public class LedgerApp {
         }
     }
 
+    public static void viewLedger() {
+
+        boolean isRunning = true;
+        while (isRunning) {
+
+            System.out.println("""
+                    What would you like to do?
+                    (A) Display all entries
+                    (D) Display only deposits
+                    (P) Display only payments
+                    (R) Run reports
+                    (H) Back to home page""");
+
+            char menuOption = getValidMenuChar(Set.of('A', 'D', 'P', 'R', 'H'));
+
+            switch (menuOption) {
+                case 'A':
+                    displayAllEntries();
+                    break;
+                case 'D':
+                    displayDeposits();
+                    break;
+                case 'P':
+                    displayPayments();
+                    break;
+                case 'R':
+                    runReports();
+                    break;
+                case 'H':
+                    System.out.println("Returning to main menu....");
+                    isRunning = false;
+                    break;
+            }
+        }
+    }
+
+    public static void displayDeposits() {
+
+        System.out.println("Searching for all deposits on file....");
+        printHeader();
+        for (Transaction t : openLedger) {
+            if (t.getAmount() > 0) {
+                displayEntry(t);
+            }
+        }
+        System.out.println("Searching complete.");
+    }
+
+    public static void displayPayments() {
+
+        System.out.println("Searching for all payments on file....");
+        printHeader();
+        for (Transaction t : openLedger) {
+            if (t.getAmount() < 0) {
+                displayEntry(t);
+            }
+        }
+        System.out.println("Searching complete.");
+    }
+
+    public static void displayAllEntries() {
+
+        printHeader();
+        for (Transaction t : openLedger) {
+            displayEntry(t);
+        }
+    }
+
+    public static void printHeader() {
+
+        System.out.printf("%-12s %-10s %-20s %-15s %10s%n", "Date", "Time", "Description", "Vendor", "Amount");
+        System.out.println("+------------+----------+----------------------+-----------------+------------+");
+
+    }
+
+    public static void displayEntry(Transaction t) {
+
+        System.out.printf("%-12s %-10s %-20s %-15s %10.2f%n",
+                t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
+    }
+
     public static void addDeposit() {
 
         boolean isRunning = true;
@@ -62,7 +143,7 @@ public class LedgerApp {
             System.out.println("Let's get info on this deposit.");
             System.out.print("Enter deposit date (MM/dd/yyyy), or N for \"now\": ");
             LocalDate inputDate = getValidDate();
-            System.out.print("Enter transaction time: ");
+            System.out.print("Enter deposit time: ");
             LocalTime inputTime = getValidTime();
             System.out.print("Enter deposit description: ");
             String inputDscrptn = getValidString();
@@ -86,8 +167,6 @@ public class LedgerApp {
             }
 
         } while (isRunning);
-
-
     }
 
     public static void loadLedger(String fileName) {
@@ -175,7 +254,7 @@ public class LedgerApp {
         boolean badInput = false;
         // uses do/while loop
         do {
-        String userInputDate = getValidString();
+            String userInputDate = getValidString();
             // sets badInput to false first
             badInput = false;
             // if input contains letter N at the start, assume LocalDate is now
@@ -244,7 +323,6 @@ public class LedgerApp {
                         DateTimeFormatter.ofPattern("HH-mm"),
                         DateTimeFormatter.ofPattern("H.mm"),
                         DateTimeFormatter.ofPattern("HH.mm"),
-
                         // 12-hour formatters with AM/PM
                         DateTimeFormatter.ofPattern("h:mm a"),
                         DateTimeFormatter.ofPattern("hh:mm a"),
