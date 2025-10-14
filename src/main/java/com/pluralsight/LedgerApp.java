@@ -61,7 +61,7 @@ public class LedgerApp {
         while (isRunning) {
 
             System.out.println("""
-                    What would you like to do?
+                    Which entries would you like to see?
                     (A) Display all entries
                     (D) Display only deposits
                     (P) Display only payments
@@ -75,10 +75,10 @@ public class LedgerApp {
                     displayAllEntries();
                     break;
                 case 'D':
-                    displayDeposits();
+                    displayTransactionsByType('+');
                     break;
                 case 'P':
-                    displayPayments();
+                    displayTransactionsByType('-');
                     break;
                 case 'R':
                     runReports();
@@ -91,25 +91,68 @@ public class LedgerApp {
         }
     }
 
-    public static void displayDeposits() {
+    public static void runReports() {
 
-        System.out.println("Searching for all deposits on file....");
-        printHeader();
-        for (Transaction t : openLedger) {
-            if (t.getAmount() > 0) {
-                displayEntry(t);
+        boolean isRunning = true;
+        while (isRunning) {
+
+            System.out.println("""
+                    What report would you like to run?
+                    (1) Month to date
+                    (2) Previous month
+                    (3) Year to date
+                    (4) Previous year
+                    (5) Search by vendor
+                    (6) Custom search
+                    (7) Back to home page""");
+
+            char menuOption = getValidMenuChar(Set.of('1', '2', '3', '4', '5', '6', '7'));
+
+            switch (menuOption) {
+                case '1':
+                    runMonthToDate();
+                    break;
+                case '2':
+                    runPrevMonth();
+                    break;
+                case '3':
+                    runYearToDate();
+                    break;
+                case '4':
+                    runPrevYear();
+                    break;
+                case '5':
+                    runSearchByVendor();
+                    break;
+                case 6:
+                    runCustomSearch();
+                    break;
+                case '7':
+                    System.out.println("Returning to main menu....");
+                    isRunning = false;
+                    break;
             }
         }
-        System.out.println("Searching complete.");
+
     }
 
-    public static void displayPayments() {
+    public static void displayTransactionsByType(char type) {
 
-        System.out.println("Searching for all payments on file....");
+        System.out.printf("Searching for all %ss on file....\n", type);
         printHeader();
-        for (Transaction t : openLedger) {
-            if (t.getAmount() < 0) {
-                displayEntry(t);
+        if (Objects.equals(type, '+')) {
+            for (Transaction t : openLedger) {
+                if (t.getAmount() > 0) {
+                    displayEntry(t);
+                }
+            }
+        } else {
+            System.out.println("Searching for all payments on file....");
+            printHeader();
+            for (Transaction t : openLedger) {
+                if (t.getAmount() < 0) {
+                    displayEntry(t);
+                }
             }
         }
         System.out.println("Searching complete.");
@@ -244,6 +287,27 @@ public class LedgerApp {
 
         System.out.printf("Welcome to your Accounting Ledger, %s! ", name);
         return fileName;
+    }
+
+    public static void moreInfo() {
+
+        System.out.println("""
+                Here's more info about what each of these menu options do:
+                (D) Add deposit
+                This will prompt you to add information about a deposit you received. You must provide the date,
+                time, description, vendor and amount of the transaction, which should be positive.
+                (P) Add payment
+                This will prompt you to add information about a payment you paid. You must provide the date, time,
+                description, vendor and amount of the transaction, which should be negative.
+                (L) View ledger
+                This will allow you to view your ledger in its entirety, or run a search based on parameters in order
+                to provide a more specific dataset.
+                (I) More info
+                This is the menu you are currently in, and details basic information about the main menu options.
+                (X) Exit program
+                This will close the program, saving any changes you've made and allowing another user to login.
+                Returning to main menu....""");
+
     }
 
     public static LocalDate getValidDate() {
