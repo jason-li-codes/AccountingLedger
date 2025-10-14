@@ -75,10 +75,10 @@ public class LedgerApp {
                     displayAllEntries();
                     break;
                 case 'D':
-                    displayTransactionsByType('+');
+                    displayTransactionsByType("deposit");
                     break;
                 case 'P':
-                    displayTransactionsByType('-');
+                    displayTransactionsByType("payment");
                     break;
                 case 'R':
                     runReports();
@@ -124,7 +124,7 @@ public class LedgerApp {
                 case '5':
                     runSearchByVendor();
                     break;
-                case 6:
+                case '6':
                     runCustomSearch();
                     break;
                 case '7':
@@ -136,18 +136,17 @@ public class LedgerApp {
 
     }
 
-    public static void displayTransactionsByType(char type) {
+    public static void displayTransactionsByType(String type) {
 
         System.out.printf("Searching for all %ss on file....\n", type);
         printHeader();
-        if (Objects.equals(type, '+')) {
+        if (Objects.equals(type, "deposit")) {
             for (Transaction t : openLedger) {
                 if (t.getAmount() > 0) {
                     displayEntry(t);
                 }
             }
         } else {
-            System.out.println("Searching for all payments on file....");
             printHeader();
             for (Transaction t : openLedger) {
                 if (t.getAmount() < 0) {
