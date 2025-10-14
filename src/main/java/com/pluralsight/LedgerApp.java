@@ -60,16 +60,16 @@ public class LedgerApp {
         boolean isRunning = true;
         do {
             System.out.println("Let's get info on this deposit.");
-            System.out.print("Enter deposit date (MM/dd/yyyy), or N for \'now\': ");
-            String inputDate = getValidDate();
+            System.out.print("Enter deposit date (MM/dd/yyyy), or N for \"now\": ");
+            LocalDate inputDate = getValidDate();
             System.out.print("Enter transaction time: ");
-            String inputTime = getValidTime();
+            LocalTime inputTime = getValidTime();
             System.out.print("Enter deposit description: ");
             String inputDscrptn = getValidString();
             System.out.print("Enter deposit vendor: ");
             String inputVendor = getValidString();
             System.out.print("Enter deposit amount: ");
-            Double inputAmount = getValidDouble();
+            double inputAmount = Math.abs(getValidDouble());
 
             openLedger.add(new Transaction(inputDate, inputTime, inputDscrptn, inputVendor, inputAmount));
 
@@ -169,38 +169,105 @@ public class LedgerApp {
 
     public static LocalDate getValidDate() {
 
-        // initializes inputDouble and boolean badInput
-        LocalDate inputDate;
+        // initializes LocalDate and boolean badInput
+        LocalDate inputDate = null;
 
         boolean badInput = false;
         // uses do/while loop
         do {
+        String userInputDate = getValidString();
             // sets badInput to false first
             badInput = false;
             // if input contains letter N at the start, assume LocalDate is now
-            if (Character.toUpperCase(input.nextLine().trim().charAt(0)) == 'N') {
+            if (Character.toUpperCase(userInputDate.charAt(0)) == 'N') {
                 inputDate = LocalDate.now();
                 System.out.println("Date set as current date, " + inputDate);
                 return inputDate;
             } else {
                 Set<DateTimeFormatter> dateFormatters = Set.of(
+                        // M/d/yy formats
                         DateTimeFormatter.ofPattern("M/d/yy"),
-                        DateTimeFormatter.ofPattern("MM/dd/yy"),
+                        DateTimeFormatter.ofPattern("M-d-yy"),
+                        DateTimeFormatter.ofPattern("M.d.yy"),
+                        // M/d/yyyy formats
                         DateTimeFormatter.ofPattern("M/d/yyyy"),
-                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
+                        DateTimeFormatter.ofPattern("M-d-yyyy"),
+                        DateTimeFormatter.ofPattern("M.d.yyyy"),
+                        // MM/dd/yy formats
+                        DateTimeFormatter.ofPattern("MM/dd/yy"),
+                        DateTimeFormatter.ofPattern("MM-dd-yy"),
+                        DateTimeFormatter.ofPattern("MM.dd.yy"),
+                        // MM/dd/yyyy formats
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy"),
+                        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+                        DateTimeFormatter.ofPattern("MM.dd.yyyy")
                 );
                 //tries to match the inputDate with the list dateFormatters
                 for (DateTimeFormatter formatter : dateFormatters) {
                     try {
-                        return LocalDate.parse(inputDate, formatter);
+                        return LocalDate.parse(userInputDate, formatter);
                     } catch (DateTimeParseException e) {
                         // tries the next format
                     }
                 }
-
+                System.out.println("You have not entered a valid date, please try again.");
+                badInput = true;
             }
             // conditional checks badInput boolean
         } while (badInput);
+
+        return inputDate;
+    }
+
+    public static LocalTime getValidTime() {
+
+        // initializes LocalDate and boolean badInput
+        LocalTime inputTime = null;
+
+        boolean badInput = false;
+        // uses do/while loop
+        do {
+            String userInputTime = getValidString();
+            // sets badInput to false first
+            badInput = false;
+            // if input contains letter N at the start, assume LocalDate is now
+            if (Character.toUpperCase(userInputTime.charAt(0)) == 'N') {
+                inputTime = LocalTime.now();
+                System.out.println("Date set as current date, " + inputTime);
+                return inputTime;
+            } else {
+                Set<DateTimeFormatter> timeFormatters = Set.of(
+                        // 24-hour formatters
+                        DateTimeFormatter.ofPattern("H:mm"),
+                        DateTimeFormatter.ofPattern("HH:mm"),
+                        DateTimeFormatter.ofPattern("H-mm"),
+                        DateTimeFormatter.ofPattern("HH-mm"),
+                        DateTimeFormatter.ofPattern("H.mm"),
+                        DateTimeFormatter.ofPattern("HH.mm"),
+
+                        // 12-hour formatters with AM/PM
+                        DateTimeFormatter.ofPattern("h:mm a"),
+                        DateTimeFormatter.ofPattern("hh:mm a"),
+                        DateTimeFormatter.ofPattern("h-mm a"),
+                        DateTimeFormatter.ofPattern("hh-mm a"),
+                        DateTimeFormatter.ofPattern("h.mm a"),
+                        DateTimeFormatter.ofPattern("hh.mm a")
+                );
+                //tries to match the inputDate with the list dateFormatters
+                for (DateTimeFormatter formatter : timeFormatters) {
+                    try {
+                        return LocalTime.parse(userInputTime, formatter);
+                    } catch (DateTimeParseException e) {
+                        // tries the next format
+                    }
+                }
+                System.out.println("You have not entered a valid time, please try again.");
+                badInput = true;
+            }
+            // conditional checks badInput boolean
+        } while (badInput);
+
+        return inputTime;
     }
 
     public static double getValidDouble() {
