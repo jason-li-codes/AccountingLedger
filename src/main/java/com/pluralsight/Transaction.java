@@ -61,6 +61,6 @@ public class Transaction {
 
     public String writeCsvFormat() {
         return String.join("|", this.transactionDate.toString(), this.transactionTime.toString(),
-                this.description, this.vendor, String.valueOf(this.amount));
+                this.description, this.vendor, String.valueOf(System.out.format("%.2f", this.amount)));
     }
 }
