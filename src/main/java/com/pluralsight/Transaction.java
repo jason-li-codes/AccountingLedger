@@ -58,4 +58,9 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    public String writeCsvFormat() {
+        return String.join("|", this.transactionDate.toString(), this.transactionTime.toString(),
+                this.description, this.vendor, String.valueOf(this.amount));
+    }
 }
