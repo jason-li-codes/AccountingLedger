@@ -2,10 +2,12 @@ package com.pluralsight;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+
 import static com.pluralsight.InputValidation.*;
 
 
@@ -13,11 +15,12 @@ public class LedgerApp {
 
     public static Scanner input = new Scanner(System.in);
 
+    public static String fileName = pickLedger();
+
     public static ArrayList<Transaction> openLedger = new ArrayList<>();
 
     public static void main(String[] args) {
 
-        String fileName = pickLedger();
         loadLedger(fileName);
 
         boolean isRunning = true;
@@ -32,7 +35,6 @@ public class LedgerApp {
                     (X) Exit program""");
 
             char mainMenuOption = getValidMenuChar(Set.of('D', 'P', 'L', 'I', 'X'));
-
             switch (mainMenuOption) {
                 case 'D':
                     addTransaction("deposit");
@@ -203,7 +205,7 @@ public class LedgerApp {
 
     public static void displayEntry(Transaction t) {
 
-        System.out.printf("%-12s %-10s %-20s %-15s %10.2f%n",
+        System.out.printf("%-12s %-10s %-20s %-15s %10.2f\n",
                 t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
     }
 
@@ -213,9 +215,9 @@ public class LedgerApp {
 
         boolean isRunning = true;
         do {
-            System.out.printf("Enter %s date (MM/dd/yyyy), or N for \"now\": \n", type);
+            System.out.printf("Enter %s date (month/day/year), or (N) for \"now\": \n", type);
             LocalDate inputDate = getValidDate();
-            System.out.printf("Enter %s time: \n", type);
+            System.out.printf("Enter %s time, or (N) for \"now\": \n", type);
             LocalTime inputTime = getValidTime();
             System.out.printf("Enter %s description: \n", type);
             String inputDescription = getValidString();
@@ -223,12 +225,12 @@ public class LedgerApp {
             String inputVendor = getValidString();
             System.out.printf("Enter %s amount: \n", type);
             double inputAmount = getValidDouble();
-            if (Objects.equals(type, "deposit") && inputAmount != Math.abs(inputAmount)) {
+            if (Objects.equals(type, "deposit") && inputAmount < 0) {
                 System.out.printf("Amount set to positive, $%f.\n", inputAmount);
-                inputAmount = Math.abs(getValidDouble());
-            } else if (Objects.equals(type, "payment") && inputAmount != -1 * Math.abs(inputAmount)) {
+                inputAmount *= -1;
+            } else if (Objects.equals(type, "payment") && inputAmount > 0) {
                 System.out.printf("Amount set to negative, -$%f.\n", inputAmount);
-                inputAmount = -1 * Math.abs(inputAmount);
+                inputAmount *= -1;
             }
 
             Transaction newTransaction = new Transaction(inputDate, inputTime, inputDescription, inputVendor, inputAmount);
@@ -237,14 +239,12 @@ public class LedgerApp {
                     (Y) Yes
                     (N) No, I need to re-enter the information""");
 
-            switch (getValidMenuChar(Set.of('Y', 'N'))) {
-                case 'Y':
-                    openLedger.add(newTransaction);
-                    break;
-                case 'N':
-                    continue;
+            if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
+                openLedger.add(newTransaction);
+                writeToCsvFile(newTransaction);
+            } else {
+                continue;
             }
-            // TODO WRITE TO CSV FILE
 
             System.out.println("Transaction added successfully.");
             System.out.printf("""
@@ -259,6 +259,38 @@ public class LedgerApp {
                 isRunning = false;
             }
         } while (isRunning);
+    }
+
+    public static void writeToCsvFile(Transaction t) {
+
+        Transaction mostRecent = openLedger.get(0);
+        LocalDateTime mostRecentTime = LocalDateTime.of(mostRecent.getTransactionDate(), mostRecent.getTransactionTime());
+        LocalDateTime newTime = LocalDateTime.of(t.getTransactionDate(), t.getTransactionTime());
+        if (!mostRecentTime.isAfter(newTime)) {
+            // mostRecentTime is at the same time or before newTime, append
+            try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(fileName, true))) {
+                bufWriter.write(t.writeCsvFormat());
+                bufWriter.newLine();
+            } catch (FileNotFoundException e) {
+                System.out.println("Sorry, there's a problem finding the ledger, please try again later.");
+            } catch (IOException e) {
+                System.out.println("Sorry, there's a problem adding to the ledger, please try again later.");
+            }
+        } else {
+            // rewrite whole file
+            try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(fileName))) {
+                ArrayList<Transaction> reverseLedger = new ArrayList<>(openLedger);
+                Collections.reverse(reverseLedger);
+                bufWriter.write("date|time|description|vendor|amount\n");
+                for (Transaction transaction : reverseLedger) {
+                    bufWriter.write(transaction.writeCsvFormat() + "\n");
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("Sorry, there's a problem finding the ledger, please try again later.");
+            } catch (IOException e) {
+                System.out.println("Sorry, there's a problem writing the ledger, please try again later.");
+            }
+        }
     }
 
     public static void loadLedger(String fileName) {
