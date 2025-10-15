@@ -150,13 +150,13 @@ public class LedgerApp {
                 break;
             case "prevMonth":
                 if (compareDate.getMonthValue() == 1) {
-                    compareDate = compareDate.withMonth(12).withYear(compareDate.getYear() - 1);
+                    compareDate = compareDate.withMonth(12).withYear(compareDate.getYear() - 1).withDayOfMonth(1);
                 } else {
-                    compareDate = compareDate.withMonth(compareDate.getMonthValue() - 1);
+                    compareDate = compareDate.withMonth(compareDate.getMonthValue() - 1).withDayOfMonth(1);
                 }
                 break;
             case "prevYear":
-                compareDate = compareDate.withYear(compareDate.getYear() - 1);
+                compareDate = compareDate.withYear(compareDate.getYear() - 1).withDayOfYear(1);
                 break;
         }
 
@@ -240,8 +240,15 @@ public class LedgerApp {
                     (N) No, I need to re-enter the information""");
 
             if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
-                openLedger.add(newTransaction);
-                writeToCsvFile(newTransaction);
+                int insertIndex = 0;
+                for (Transaction t : openLedger) {
+                    if (newTransaction.getTransactionDate().isBefore(t.getTransactionDate())) {
+                        break;
+                    }
+                    insertIndex++;
+                }
+                openLedger.add(insertIndex, newTransaction);
+                writeToCsvFile(insertIndex, newTransaction);
             } else {
                 continue;
             }
@@ -261,13 +268,9 @@ public class LedgerApp {
         } while (isRunning);
     }
 
-    public static void writeToCsvFile(Transaction t) {
+    public static void writeToCsvFile(int index, Transaction t) {
 
-        Transaction mostRecent = openLedger.get(0);
-        LocalDateTime mostRecentTime = LocalDateTime.of(mostRecent.getTransactionDate(), mostRecent.getTransactionTime());
-        LocalDateTime newTime = LocalDateTime.of(t.getTransactionDate(), t.getTransactionTime());
-        if (!mostRecentTime.isAfter(newTime)) {
-            // mostRecentTime is at the same time or before newTime, append
+        if (index == 0) {
             try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(fileName, true))) {
                 bufWriter.write(t.writeCsvFormat());
                 bufWriter.newLine();
