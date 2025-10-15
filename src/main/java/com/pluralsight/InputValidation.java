@@ -75,8 +75,8 @@ public class InputValidation {
             badInput = false;
             // if input contains letter N at the start, assume LocalDate is now
             if (Character.toUpperCase(userInputTime.charAt(0)) == 'N') {
-                inputTime = LocalTime.now();
-                System.out.println("Date set as current date, " + inputTime);
+                inputTime = LocalTime.now().withNano(0);
+                System.out.println("Time set as current time, " + inputTime);
                 return inputTime;
             } else {
                 Set<DateTimeFormatter> timeFormatters = Set.of(
@@ -129,7 +129,7 @@ public class InputValidation {
                 inputDouble = input.nextDouble();
                 // rounds it to have 2 decimal points
                 inputDouble = Math.round(inputDouble * 100) / 100.0;
-                System.out.printf("Your input has been rounded to %f.", inputDouble);
+                System.out.printf("Your input has been rounded to %.2f. \n", inputDouble);
                 // if it can't read as double, throws exception with error message and sets badInput to try again
             } catch (Exception e) {
                 System.out.println("Sorry I don't know what you mean, please try again.");
@@ -153,7 +153,7 @@ public class InputValidation {
             badInput = false;
             string = input.nextLine().trim();
 
-            if (string.isEmpty() || string.equals("\n")) {
+            if (string.isEmpty()) {
                 System.out.println("You have not entered anything, please try again.");
                 badInput = true;
             }
