@@ -131,8 +131,8 @@ public static double getValidDouble() {
     // initializes inputDouble and boolean badInput
     String userInputDouble = null;
     Double inputDouble = null;
-    boolean badInput = false;
 
+    boolean badInput = false;
     // uses do/while loop
     do {
         // sets badInput to false first
@@ -165,12 +165,11 @@ public static Double validateDouble(String num) {
     }
 }
 
-
 public static String getValidString() {
 
     String string;
-    boolean badInput = false;
 
+    boolean badInput = false;
     do {
         badInput = false;
         string = input.nextLine().trim();
@@ -182,37 +181,6 @@ public static String getValidString() {
     } while (badInput);
 
     return string;
-}
-
-public static char getValidMenuChar(Set<Character> validMenuOptions) {
-
-    // initializes inputChar and boolean badInput
-    char inputChar = ' ';
-    boolean badInput = false;
-
-    // uses do/while loop
-    do {
-        // sets badInput to false first
-        badInput = false;
-        //tries to get an input
-        try {
-            // takes uppercase first character of user input
-            inputChar = Character.toUpperCase(input.nextLine().trim().charAt(0));
-            // if input does not match Set of characters in method parameters, asks for another attempt
-            if (!validMenuOptions.contains(inputChar)) {
-                System.out.println("Sorry, I don't recognize that option, please try again.");
-                badInput = true;
-            }
-            // if it can't read as a valid char, catches exception and sets badInput to true to try again
-        } catch (Exception e) {
-            System.out.println("Sorry I don't know what you mean, please try again.");
-            badInput = true;
-        }
-        // conditional checks badInput boolean
-    } while (badInput);
-
-    // returns the correct inputChar as an uppercase char
-    return inputChar;
 }
 
 }
