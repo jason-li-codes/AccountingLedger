@@ -4,6 +4,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -292,7 +293,8 @@ public class LedgerApp {
 
     public static void createFile(ArrayList<Transaction> list, String type) {
 
-        String newFileName = String.join("_", LocalDateTime.now().toString(), type, fileName);
+        String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+        String newFileName = String.join("_", formattedDate, type, fileName);
         try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(newFileName))) {
             bufWriter.write("date|time|description|vendor|amount\n");
             for (Transaction transaction : list) {
@@ -340,17 +342,12 @@ public class LedgerApp {
 
     public static void displayEntries(ArrayList<Transaction> list) {
 
-        printHeader();
+        System.out.printf("%-12s %-10s %-20s %-15s %10s%n", "Date", "Time", "Description", "Vendor", "Amount");
+        System.out.println("+------------+----------+--------------------+-------------------+------------+");
         for (Transaction t : list) {
             displayEntry(t);
         }
-    }
-
-    public static void printHeader() {
-
-        System.out.printf("%-12s %-10s %-20s %-15s %10s%n", "Date", "Time", "Description", "Vendor", "Amount");
-        System.out.println("+------------+----------+----------------------+-----------------+------------+");
-
+        System.out.println("+------------+----------+--------------------+-------------------+------------+");
     }
 
     public static void displayEntry(Transaction t) {
