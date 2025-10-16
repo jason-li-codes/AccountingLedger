@@ -4,7 +4,9 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.pluralsight.InputValidation.*;
 
@@ -161,6 +163,12 @@ public class LedgerApp {
             endDateInput = validateDate(endDateInputStr);
         }
 
+        if (startDateInput != null && endDateInput != null && startDateInput.isAfter(endDateInput)) {
+            LocalDate temp = startDateInput;
+            startDateInput = endDateInput;
+            endDateInput = temp;
+        }
+
         LocalTime startTimeInput = null;
         System.out.println("What is the starting time you would like to search up to?");
         String startTimeInputStr = input.nextLine().trim();
@@ -175,24 +183,36 @@ public class LedgerApp {
             endTimeInput = validateTime(endTimeInputStr);
         }
 
+        if (startTimeInput != null && endTimeInput != null && startTimeInput.isAfter(endTimeInput)) {
+            LocalTime temp = startTimeInput;
+            startTimeInput = endTimeInput;
+            endTimeInput = temp;
+        }
+
         System.out.println("What description matches your query?");
-        String descriptionInput = input.nextLine().trim();
+        String descriptionInput = input.nextLine().trim().toLowerCase();
 
         System.out.println("What vendor matches your query?");
-        String vendorInput = input.nextLine().trim();
+        String vendorInput = input.nextLine().trim().toLowerCase();
 
         Double amountMinInput = null;
         System.out.println("What is the minimum transaction you are looking for?");
-        String amountMinInputStr = input.nextLine();
-        if (amountMinInputStr != null) {
+        String amountMinInputStr = input.nextLine().trim();
+        if (!amountMinInputStr.isEmpty()) {
             amountMinInput = validateDouble(amountMinInputStr);
         }
 
         Double amountMaxInput = null;
         System.out.println("What is the maximum transaction you are looking for?");
-        String amountMaxInputStr = input.nextLine();
-        if (amountMaxInputStr != null) {
+        String amountMaxInputStr = input.nextLine().trim();
+        if (!amountMaxInputStr.isEmpty()) {
             amountMaxInput = validateDouble(amountMaxInputStr);
+        }
+
+        if (amountMinInput != null && amountMaxInput != null && amountMinInput > amountMaxInput) {
+            Double temp = amountMinInput;
+            amountMinInput = amountMaxInput;
+            amountMaxInput = temp;
         }
 
         runReportCustom(startDateInput, endDateInput, startTimeInput, endTimeInput,
@@ -210,11 +230,13 @@ public class LedgerApp {
                         (endDate == null || !t.getTransactionDate().isAfter(endDate)))
                 .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
                         (endTime == null || !t.getTransactionTime().isAfter(endTime)))
-                .filter(t -> (description == null || description.isEmpty() || t.getDescription().contains(description)))
-                .filter(t -> (vendor == null || vendor.isEmpty() || t.getVendor().contains(vendor)))
+                .filter(t -> (description == null || description.isEmpty() ||
+                        t.getDescription().toLowerCase().contains(description)))
+                .filter(t -> (vendor == null || vendor.isEmpty() ||
+                        t.getVendor().toLowerCase().contains(vendor)))
                 .filter(t -> (amountMin == null || t.getAmount() >= amountMin))
                 .filter(t -> (amountMax == null || t.getAmount() <= amountMax))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
         displayEntries(filteredList);
 
@@ -248,7 +270,8 @@ public class LedgerApp {
         System.out.println("Searching....");
         ArrayList<Transaction> filteredLedgerByTime = (ArrayList<Transaction>)
                 openLedger.stream().filter(t -> !finalStartDate.isAfter(t.getTransactionDate()) &&
-                        !finalEndDate.isBefore(t.getTransactionDate())).toList();
+                        !finalEndDate.isBefore(t.getTransactionDate()))
+                        .collect(Collectors.toCollection(ArrayList::new));
 
         displayEntries(filteredLedgerByTime);
         System.out.println("Searching complete.");
@@ -290,10 +313,12 @@ public class LedgerApp {
         ArrayList<Transaction> filteredLedgerByType = null;
         if (Objects.equals(type, "deposit")) {
             filteredLedgerByType =
-                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() > 0).toList();
+                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() > 0)
+                                    .collect(Collectors.toCollection(ArrayList::new));
         } else {
             filteredLedgerByType =
-                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() < 0).toList();
+                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() < 0)
+                            .collect(Collectors.toCollection(ArrayList::new));
         }
 
         displayEntries(filteredLedgerByType);
@@ -354,8 +379,8 @@ public class LedgerApp {
                 inputAmount *= -1;
                 System.out.printf("Amount set to positive, $%.2f.\n", inputAmount);
             } else if (Objects.equals(type, "payment") && inputAmount > 0) {
-                inputAmount *= -1;
                 System.out.printf("Amount set to negative, -$%.2f.\n", inputAmount);
+                inputAmount *= -1;
             }
 
             Transaction newTransaction = new Transaction(inputDate, inputTime, inputDescription, inputVendor, inputAmount);
@@ -369,9 +394,10 @@ public class LedgerApp {
             char transactionMenuOption = getValidMenuChar(Set.of('Y', 'N', 'X'));
             switch (transactionMenuOption) {
                 case 'Y':
+                    LocalDateTime newTransactionDateTime = newTransaction.getTransactionDate().atTime(newTransaction.getTransactionTime());
                     int insertIndex = 0;
                     for (Transaction t : openLedger) {
-                        if (newTransaction.getTransactionDate().isBefore(t.getTransactionDate())) {
+                        if (!newTransactionDateTime.isBefore(t.getTransactionDate().atTime(t.getTransactionTime()))) {
                             break;
                         }
                         insertIndex++;
@@ -452,7 +478,7 @@ public class LedgerApp {
         } catch (FileNotFoundException e) {
             System.out.println("Sorry, there's a problem finding your ledger, please try again later.");
             System.exit(2);
-        } catch (IOException e) {
+        } catch (IOException | DateTimeParseException e) {
             System.out.println("Sorry, there was a problem reading your ledger, please try again later.");
             System.exit(3);
         }
@@ -461,8 +487,6 @@ public class LedgerApp {
 
     public static String pickLedger() {
 
-        System.out.println("Please enter your passcode: ");
-        String userPasscode = getValidString();
         HashMap<String, String[]> passcodes = new HashMap<>();
         String name = "";
         String fileName = "";
@@ -490,11 +514,14 @@ public class LedgerApp {
 
         boolean badInput = false;
         do {
+            System.out.println("Please enter your passcode: ");
+            String userPasscode = getValidString();
             String[] userInfo = passcodes.get(userPasscode);
 
             if (userInfo != null) {
                 name = userInfo[0];
                 fileName = userInfo[1];
+                break;
             } else {
                 System.out.println("Your passcode does not match any account we have, please try again.");
                 badInput = true;
