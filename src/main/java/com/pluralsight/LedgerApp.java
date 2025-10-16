@@ -35,7 +35,7 @@ public class LedgerApp {
                     (I) More info
                     (X) Exit program""");
 
-            char mainMenuOption = getValidMenuChar(Set.of('D', 'P', 'L', 'I', 'X'));
+            char mainMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
             switch (mainMenuOption) {
                 case 'D':
                     addTransaction("deposit");
@@ -53,6 +53,8 @@ public class LedgerApp {
                     System.out.println("EXITING PROGRAM...");
                     isRunning = false;
                     break;
+                default:
+                    System.out.println("Sorry, I don't recognize that option, please try again.");
             }
         }
     }
@@ -68,9 +70,9 @@ public class LedgerApp {
                     (D) Display only deposits
                     (P) Display only payments
                     (R) Run reports
-                    (H) Back to home page""");
+                    (H) Back to main menu""");
 
-            char mainLedgerOption = getValidMenuChar(Set.of('A', 'D', 'P', 'R', 'H'));
+            char mainLedgerOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
 
             switch (mainLedgerOption) {
                 case 'A':
@@ -89,6 +91,8 @@ public class LedgerApp {
                     System.out.println("Returning to main menu....");
                     isRunning = false;
                     break;
+                default:
+                    System.out.println("Sorry, I don't recognize that option, please try again.");
             }
         }
     }
@@ -106,9 +110,9 @@ public class LedgerApp {
                     (4) Previous year
                     (5) Search by vendor
                     (6) Custom search
-                    (7) Back to home page""");
+                    (7) Back to ledger menu""");
 
-            char reportMenuOption = getValidMenuChar(Set.of('1', '2', '3', '4', '5', '6', '7'));
+            char reportMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
 
             switch (reportMenuOption) {
                 case '1':
@@ -130,9 +134,11 @@ public class LedgerApp {
                     gatherInfoCustomSearch();
                     break;
                 case '7':
-                    System.out.println("Returning to main menu....");
+                    System.out.println("Returning to ledger menu....");
                     isRunning = false;
                     break;
+                default:
+                    System.out.println("Sorry, I don't recognize that option, please try again.");
             }
         }
 
@@ -143,7 +149,7 @@ public class LedgerApp {
         System.out.println("What vendor matches your query?");
         String vendorInput = getValidString();
 
-        runReportCustom(null, null, null, null, null, vendorInput, null, null);
+        runReportCustom("byVendor", null, null, null, null, null, vendorInput, null, null);
     }
 
     public static void gatherInfoCustomSearch() {
@@ -151,14 +157,14 @@ public class LedgerApp {
         System.out.println("Let's get information about this custom search.");
 
         LocalDate startDateInput = null;
-        System.out.println("What is the starting date you would like to search up to?");
+        System.out.println("Enter the starting date you would like to search up to, or (N) for \"now\": ");
         String startDateInputStr = input.nextLine().trim();
         if (!startDateInputStr.isEmpty()) {
             startDateInput = validateDate(startDateInputStr);
         }
 
         LocalDate endDateInput = null;
-        System.out.println("What is the ending date you would like to search down to?");
+        System.out.println("Enter the ending date you would like to search up to, or (N) for \"now\": ");
         String endDateInputStr = input.nextLine().trim();
         if (!endDateInputStr.isEmpty()) {
             endDateInput = validateDate(endDateInputStr);
@@ -171,14 +177,14 @@ public class LedgerApp {
         }
 
         LocalTime startTimeInput = null;
-        System.out.println("What is the starting time you would like to search up to?");
+        System.out.println("Enter the starting time you would like to search up to, or (N) for \"now\": ");
         String startTimeInputStr = input.nextLine().trim();
         if (!startTimeInputStr.isEmpty()) {
             startTimeInput = validateTime(startTimeInputStr);
         }
 
         LocalTime endTimeInput = null;
-        System.out.println("What is the ending time you would like to search down to?");
+        System.out.println("Enter the ending time you would like to search up to, or (N) for \"now\": ");
         String endTimeInputStr = input.nextLine().trim();
         if (!endTimeInputStr.isEmpty()) {
             endTimeInput = validateTime(endTimeInputStr);
@@ -216,17 +222,17 @@ public class LedgerApp {
             amountMaxInput = temp;
         }
 
-        runReportCustom(startDateInput, endDateInput, startTimeInput, endTimeInput,
-                descriptionInput, vendorInput, amountMaxInput, amountMaxInput);
+        runReportCustom("custom", startDateInput, endDateInput, startTimeInput, endTimeInput,
+                descriptionInput, vendorInput, amountMinInput, amountMaxInput);
 
     }
 
-    public static void runReportCustom(LocalDate startDate, LocalDate endDate, LocalTime startTime,
+    public static void runReportCustom(String type, LocalDate startDate, LocalDate endDate, LocalTime startTime,
                                        LocalTime endTime, String description, String vendor,
                                        Double amountMin, Double amountMax) {
 
         System.out.println("Searching....");
-        ArrayList<Transaction> filteredList = (ArrayList<Transaction>) openLedger.stream()
+        ArrayList<Transaction> filteredLedger = (ArrayList<Transaction>) openLedger.stream()
                 .filter(t -> (startDate == null || !t.getTransactionDate().isBefore(startDate)) &&
                         (endDate == null || !t.getTransactionDate().isAfter(endDate)))
                 .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
@@ -239,8 +245,22 @@ public class LedgerApp {
                 .filter(t -> (amountMax == null || t.getAmount() <= amountMax))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        displayEntries(filteredList);
+        displayEntries(filteredLedger);
 
+        System.out.println("Searching complete.");
+
+        if (!filteredLedger.isEmpty()) {
+            System.out.println("""
+                    Would you like a file of this report?
+                    (Y) Yes
+                    (N) No, return to previous menu""");
+            if (Character.toUpperCase(input.nextLine().trim().charAt(0)) == 'Y') {
+                createFile(filteredLedger, type);
+            }
+        } else {
+            System.out.println("There are no transactions to display.");
+        }
+        System.out.println("Returning to previous menu....");
     }
 
 
@@ -265,30 +285,7 @@ public class LedgerApp {
                 endDate = endDate.minusYears(1).withMonth(12).withDayOfMonth(31);
                 break;
         }
-        final LocalDate finalStartDate = startDate;
-        final LocalDate finalEndDate = endDate;
-
-        System.out.println("Searching....");
-        ArrayList<Transaction> filteredLedgerByTime = (ArrayList<Transaction>)
-                openLedger.stream().filter(t -> !finalStartDate.isAfter(t.getTransactionDate()) &&
-                        !finalEndDate.isBefore(t.getTransactionDate()))
-                        .collect(Collectors.toCollection(ArrayList::new));
-
-        displayEntries(filteredLedgerByTime);
-        System.out.println("Searching complete.");
-
-        if (!filteredLedgerByTime.isEmpty()) {
-            System.out.println("""
-                    Would you like a file of this report?
-                    (Y) Yes
-                    (N) No, return to main menu""");
-            if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
-                createFile(filteredLedgerByTime, type);
-            }
-        } else {
-            System.out.println("There are no transactions to display.");
-        }
-        System.out.println("Returning to main menu....");
+        runReportCustom(type, startDate, endDate, null, null, null, null, null, null);
     }
 
     public static void createFile(ArrayList<Transaction> list, String type) {
@@ -314,46 +311,21 @@ public class LedgerApp {
 
         ArrayList<Transaction> filteredLedgerByType = null;
         if (Objects.equals(type, "deposit")) {
-            filteredLedgerByType =
-                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() > 0)
-                                    .collect(Collectors.toCollection(ArrayList::new));
+            runReportCustom(type, null, null, null, null, null, null, 0.0, null);
         } else {
-            filteredLedgerByType =
-                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() < 0)
-                            .collect(Collectors.toCollection(ArrayList::new));
+            runReportCustom(type, null, null, null, null, null, null, null, 0.0);
         }
-
-        displayEntries(filteredLedgerByType);
-        System.out.println("Searching complete.");
-
-        if (!filteredLedgerByType.isEmpty()) {
-            System.out.println("""
-                    Would you like a file of this report?
-                    (Y) Yes
-                    (N) No, return to main menu""");
-            if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
-                createFile(filteredLedgerByType, type);
-            }
-        } else {
-            System.out.printf("There are no %ss to display.", type);
-        }
-        System.out.println("Returning to main menu....");
     }
 
     public static void displayEntries(ArrayList<Transaction> list) {
 
-        System.out.printf("%-12s %-10s %-20s %-15s %10s%n", "Date", "Time", "Description", "Vendor", "Amount");
-        System.out.println("+------------+----------+--------------------+-------------------+------------+");
+        System.out.printf("%-12s %-10s %-40s %-20s %12s%n", "Date", "Time", "Description", "Vendor", "Amount");
+        System.out.println("+------------+----------+---------------------------------------+------------------------+--------------+");
         for (Transaction t : list) {
-            displayEntry(t);
+            System.out.printf("|%-12s|%-10s|%-40s|%-20s|%12.2f|\n",
+                    t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
         }
-        System.out.println("+------------+----------+--------------------+-------------------+------------+");
-    }
-
-    public static void displayEntry(Transaction t) {
-
-        System.out.printf("%-12s %-10s %-20s %-15s %10.2f\n",
-                t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
+        System.out.println("+------------+----------+---------------------------------------+------------------------+--------------+");
     }
 
     public static void addTransaction(String type) {
@@ -364,7 +336,7 @@ public class LedgerApp {
         do {
             System.out.printf("Enter %s date (month/day/year), or (N) for \"now\": \n", type);
             LocalDate inputDate = getValidDate();
-            System.out.printf("Enter %s time, or (N) for \"now\": \n", type);
+            System.out.printf("Enter %s time (hours:minutes), or (N) for \"now\": \n", type);
             LocalTime inputTime = getValidTime();
             System.out.printf("Enter %s description: \n", type);
             String inputDescription = getValidString();
@@ -388,7 +360,7 @@ public class LedgerApp {
                     (N) No, I need to re-enter the information
                     (X) No, I want to return to main menu""");
 
-            char transactionMenuOption = getValidMenuChar(Set.of('Y', 'N', 'X'));
+            char transactionMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
             switch (transactionMenuOption) {
                 case 'Y':
                     LocalDateTime newTransactionDateTime = newTransaction.getTransactionDate().atTime(newTransaction.getTransactionTime());
@@ -401,14 +373,12 @@ public class LedgerApp {
                     }
                     openLedger.add(insertIndex, newTransaction);
                     writeToCsvFile(insertIndex, newTransaction);
-                    System.out.println("Transaction added successfully.");
                     System.out.printf("""
                             Would you like to add another %s?
                             (Y) Yes, add another %s
-                            (N) No, return to main menu
-                            """, type, type);
+                            (N) No, return to main menu""", type, type);
 
-                    char menuOption = getValidMenuChar(Set.of('Y', 'N'));
+                    char menuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
                     if (menuOption == 'N') {
                         System.out.println("Returning to main menu...");
                         isRunning = false;
@@ -429,6 +399,7 @@ public class LedgerApp {
             try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(fileName, true))) {
                 bufWriter.write(t.writeCsvFormat());
                 bufWriter.newLine();
+                System.out.println("Transaction added successfully.");
             } catch (FileNotFoundException e) {
                 System.out.println("Sorry, there's a problem finding the ledger, please try again later.");
             } catch (IOException e) {
@@ -443,6 +414,7 @@ public class LedgerApp {
                 for (Transaction transaction : reverseLedger) {
                     bufWriter.write(transaction.writeCsvFormat() + "\n");
                 }
+                System.out.println("Transaction added successfully.");
             } catch (FileNotFoundException e) {
                 System.out.println("Sorry, there's a problem finding the ledger, please try again later.");
             } catch (IOException e) {
