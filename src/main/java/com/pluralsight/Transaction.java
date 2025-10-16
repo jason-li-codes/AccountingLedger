@@ -59,7 +59,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public String writeCsvFormat() {
+    public String convertToCsvFormat() {
         return String.join("|", this.transactionDate.toString(), this.transactionTime.toString(),
                 this.description, this.vendor, String.valueOf(String.format("%.2f", this.amount)));
     }

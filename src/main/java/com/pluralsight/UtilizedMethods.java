@@ -53,7 +53,6 @@ public class UtilizedMethods {
             if (userInfo != null) {
                 name = userInfo[0];
                 fileName = userInfo[1];
-                break;
             } else {
                 System.out.println("Your passcode does not match any account we have, please try again.");
                 badInput = true;
@@ -121,7 +120,7 @@ public class UtilizedMethods {
             }
 
             Transaction newTransaction = new Transaction(inputDate, inputTime, inputDescription, inputVendor, inputAmount);
-            System.out.println(newTransaction.writeCsvFormat());
+            System.out.println(newTransaction.convertToCsvFormat());
             System.out.println("""
                     Does this transaction contain the correct information you'd like to add?
                     (Y) Yes
@@ -131,7 +130,7 @@ public class UtilizedMethods {
             char transactionMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
             switch (transactionMenuOption) {
                 case 'Y':
-                    LocalDateTime newTransactionDateTime = newTransaction.getTransactionDate().atTime(newTransaction.getTransactionTime());
+                    LocalDateTime newTransactionDateTime = inputDate.atTime(inputTime);
                     int insertIndex = 0;
                     for (Transaction t : openLedger) {
                         if (!newTransactionDateTime.isBefore(t.getTransactionDate().atTime(t.getTransactionTime()))) {
@@ -165,7 +164,7 @@ public class UtilizedMethods {
 
         if (index == 0) {
             try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(fileName, true))) {
-                bufWriter.write(t.writeCsvFormat());
+                bufWriter.write(t.convertToCsvFormat());
                 bufWriter.newLine();
                 System.out.println("Transaction added successfully.");
             } catch (FileNotFoundException e) {
@@ -180,7 +179,7 @@ public class UtilizedMethods {
                 Collections.reverse(reverseLedger);
                 bufWriter.write("date|time|description|vendor|amount\n");
                 for (Transaction transaction : reverseLedger) {
-                    bufWriter.write(transaction.writeCsvFormat() + "\n");
+                    bufWriter.write(transaction.convertToCsvFormat() + "\n");
                 }
                 System.out.println("Transaction added successfully.");
             } catch (FileNotFoundException e) {
@@ -191,11 +190,11 @@ public class UtilizedMethods {
         }
     }
 
-    public static void displayEntries(ArrayList<Transaction> list) {
+    public static void displayEntries(ArrayList<Transaction> ledger) {
 
         System.out.printf("%-12s %-10s %-40s %-20s %12s%n", "Date", "Time", "Description", "Vendor", "Amount");
         System.out.println("+------------+----------+---------------------------------------+------------------------+--------------+");
-        for (Transaction t : list) {
+        for (Transaction t : ledger) {
             System.out.printf("|%-12s|%-10s|%-40s|%-20s|%12.2f|\n",
                     t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
         }
@@ -206,7 +205,6 @@ public class UtilizedMethods {
 
         System.out.printf("Searching for all %ss on file....\n", type);
 
-        ArrayList<Transaction> filteredLedgerByType = null;
         if (Objects.equals(type, "deposit")) {
             runReportCustom(type, null, null, null, null, null, null, 0.0, null);
         } else {
@@ -250,19 +248,15 @@ public class UtilizedMethods {
 
         System.out.println("Let's get information about this custom search.");
 
-        LocalDate startDateInput = null;
+        LocalDate startDateInput;
         System.out.println("Enter the starting date you would like to search up to, or (N) for \"now\": ");
         String startDateInputStr = input.nextLine().trim();
-        if (!startDateInputStr.isEmpty()) {
-            startDateInput = validateDate(startDateInputStr);
-        }
+        startDateInput = attemptParseDate(startDateInputStr);
 
         LocalDate endDateInput = null;
         System.out.println("Enter the ending date you would like to search up to, or (N) for \"now\": ");
         String endDateInputStr = input.nextLine().trim();
-        if (!endDateInputStr.isEmpty()) {
-            endDateInput = validateDate(endDateInputStr);
-        }
+        endDateInput = attemptParseDate(endDateInputStr);
 
         if (startDateInput != null && endDateInput != null && startDateInput.isAfter(endDateInput)) {
             LocalDate temp = startDateInput;
@@ -273,16 +267,12 @@ public class UtilizedMethods {
         LocalTime startTimeInput = null;
         System.out.println("Enter the starting time you would like to search up to, or (N) for \"now\": ");
         String startTimeInputStr = input.nextLine().trim();
-        if (!startTimeInputStr.isEmpty()) {
-            startTimeInput = validateTime(startTimeInputStr);
-        }
+        startTimeInput = attemptParseTime(startTimeInputStr);
 
         LocalTime endTimeInput = null;
         System.out.println("Enter the ending time you would like to search up to, or (N) for \"now\": ");
         String endTimeInputStr = input.nextLine().trim();
-        if (!endTimeInputStr.isEmpty()) {
-            endTimeInput = validateTime(endTimeInputStr);
-        }
+        endTimeInput = attemptParseTime(endTimeInputStr);
 
         if (startTimeInput != null && endTimeInput != null && startTimeInput.isAfter(endTimeInput)) {
             LocalTime temp = startTimeInput;
@@ -300,14 +290,14 @@ public class UtilizedMethods {
         System.out.println("What is the minimum transaction you are looking for?");
         String amountMinInputStr = input.nextLine().trim();
         if (!amountMinInputStr.isEmpty()) {
-            amountMinInput = validateDouble(amountMinInputStr);
+            amountMinInput = attemptParseDouble(amountMinInputStr);
         }
 
         Double amountMaxInput = null;
         System.out.println("What is the maximum transaction you are looking for?");
         String amountMaxInputStr = input.nextLine().trim();
         if (!amountMaxInputStr.isEmpty()) {
-            amountMaxInput = validateDouble(amountMaxInputStr);
+            amountMaxInput = attemptParseDouble(amountMaxInputStr);
         }
 
         if (amountMinInput != null && amountMaxInput != null && amountMinInput > amountMaxInput) {
@@ -318,7 +308,6 @@ public class UtilizedMethods {
 
         runReportCustom("custom", startDateInput, endDateInput, startTimeInput, endTimeInput,
                 descriptionInput, vendorInput, amountMinInput, amountMaxInput);
-
     }
 
     public static void runReportCustom(String type, LocalDate startDate, LocalDate endDate, LocalTime startTime,
@@ -357,14 +346,14 @@ public class UtilizedMethods {
         System.out.println("Returning to previous menu....");
     }
 
-    public static void createFile(ArrayList<Transaction> list, String type) {
+    public static void createFile(ArrayList<Transaction> filteredLedger, String type) {
 
         String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
         String newFileName = String.join("_", formattedDate, type, fileName);
         try (BufferedWriter bufWriter = new BufferedWriter(new FileWriter(newFileName))) {
             bufWriter.write("date|time|description|vendor|amount\n");
-            for (Transaction transaction : list) {
-                bufWriter.write(transaction.writeCsvFormat() + "\n");
+            for (Transaction transaction : filteredLedger) {
+                bufWriter.write(transaction.convertToCsvFormat() + "\n");
             }
             System.out.println("File created successfully.");
         } catch (FileNotFoundException e) {

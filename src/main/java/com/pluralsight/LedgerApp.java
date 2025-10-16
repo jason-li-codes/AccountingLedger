@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-import java.io.*;
 import java.util.*;
 
 import static com.pluralsight.UtilizedMethods.*;
@@ -9,11 +8,13 @@ public class LedgerApp {
 
     public static Scanner input = new Scanner(System.in);
 
-    public static String fileName = pickLedger();
+    public static String fileName;
 
     public static ArrayList<Transaction> openLedger = new ArrayList<>();
 
     public static void main(String[] args) {
+
+        fileName = pickLedger();
 
         loadLedger(fileName);
 
@@ -37,7 +38,7 @@ public class LedgerApp {
                     addTransaction("payment");
                     break;
                 case 'L':
-                    viewLedger();
+                    viewLedgerMenu();
                     break;
                 case 'I':
                     moreInfo();
@@ -52,7 +53,7 @@ public class LedgerApp {
         }
     }
 
-    public static void viewLedger() {
+    public static void viewLedgerMenu() {
 
         boolean isRunning = true;
         while (isRunning) {
@@ -65,9 +66,9 @@ public class LedgerApp {
                     (R) Run reports
                     (H) Back to main menu""");
 
-            char mainLedgerOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
+            char ledgerMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
 
-            switch (mainLedgerOption) {
+            switch (ledgerMenuOption) {
                 case 'A':
                     displayEntries(openLedger);
                     break;
@@ -78,7 +79,7 @@ public class LedgerApp {
                     displayEntriesByType("payment");
                     break;
                 case 'R':
-                    runReports();
+                    viewReportsMenu();
                     break;
                 case 'H':
                     System.out.println("Returning to main menu....");
@@ -90,7 +91,7 @@ public class LedgerApp {
         }
     }
 
-    public static void runReports() {
+    public static void viewReportsMenu() {
 
         boolean isRunning = true;
         while (isRunning) {
@@ -105,9 +106,9 @@ public class LedgerApp {
                     (6) Custom search
                     (7) Back to ledger menu""");
 
-            char reportMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
+            char reportsMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
 
-            switch (reportMenuOption) {
+            switch (reportsMenuOption) {
                 case '1':
                     runReportDefault("monthToDate");
                     break;
