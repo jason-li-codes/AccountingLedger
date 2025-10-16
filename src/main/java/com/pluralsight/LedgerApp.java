@@ -109,16 +109,16 @@ public class LedgerApp {
 
             switch (reportMenuOption) {
                 case '1':
-                    runReportDefault("monthTo");
+                    runReportDefault("monthToDate");
                     break;
                 case '2':
-                    runReportDefault("prevMonth");
+                    runReportDefault("previousMonth");
                     break;
                 case '3':
-                    runReportDefault("yearTo");
+                    runReportDefault("yearToDate");
                     break;
                 case '4':
-                    runReportDefault("prevYear");
+                    runReportDefault("previousYear");
                     break;
                 case '5':
                     runReportByVendor();
@@ -133,6 +133,14 @@ public class LedgerApp {
             }
         }
 
+    }
+
+    public static void runReportByVendor() {
+
+        System.out.println("What vendor matches your query?");
+        String vendorInput = getValidString();
+
+        runReportCustom(null, null, null, null, null, vendorInput, null, null);
     }
 
     public static void gatherInfoCustomSearch() {
@@ -202,8 +210,8 @@ public class LedgerApp {
                         (endDate == null || !t.getTransactionDate().isAfter(endDate)))
                 .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
                         (endTime == null || !t.getTransactionTime().isAfter(endTime)))
-                .filter(t -> (description.isEmpty() || t.getDescription().contains(description)))
-                .filter(t -> (vendor.isEmpty() || t.getVendor().contains(vendor)))
+                .filter(t -> (description == null || description.isEmpty() || t.getDescription().contains(description)))
+                .filter(t -> (vendor == null || vendor.isEmpty() || t.getVendor().contains(vendor)))
                 .filter(t -> (amountMin == null || t.getAmount() >= amountMin))
                 .filter(t -> (amountMax == null || t.getAmount() <= amountMax))
                 .toList();
@@ -219,17 +227,17 @@ public class LedgerApp {
         LocalDate endDate = LocalDate.now();
 
         switch (type) {
-            case "monthTo":
+            case "monthToDate":
                 startDate = startDate.withDayOfMonth(1);
                 break;
-            case "yearTo":
+            case "yearToDate":
                 startDate = startDate.withDayOfYear(1);
                 break;
-            case "prevMonth":
+            case "previousMonth":
                 startDate = startDate.minusMonths(1).withDayOfMonth(1);
                 endDate = endDate.minusMonths(1).withDayOfMonth(endDate.minusMonths(1).lengthOfMonth());
                 break;
-            case "prevYear":
+            case "previousYear":
                 startDate = startDate.minusYears(1).withDayOfYear(1);
                 endDate = endDate.minusYears(1).withMonth(12).withDayOfMonth(31);
                 break;
