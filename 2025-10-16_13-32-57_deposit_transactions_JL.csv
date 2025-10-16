@@ -1,0 +1,13 @@
+date|time|description|vendor|amount
+2025-05-07|11:05:33|payment received|PayPal|770.00
+2025-03-23|14:35:26|Invoice 1007 paid|Joe|1950.00
+2024-12-23|13:50:50|payment received|Stripe|620.00
+2024-10-24|10:10:45|Invoice 1006 paid|Joe|2100.00
+2024-08-25|13:10:11|payment received|PayPal|500.00
+2024-06-26|17:15:30|Invoice 1005 paid|Joe|1750.00
+2024-05-12|15:00|payment received|Stripe|890.00
+2024-02-28|08:55:05|Invoice 1004 paid|Joe|1600.00
+2023-12-15|12:00|payment received|PayPal|450.00
+2023-10-10|15:40:55|Invoice 1003 paid|Joe|1350.00
+2023-07-05|14:10:30|payment received|Stripe|300.00
+2023-05-01|13:40:57|Invoice 1002 paid|Joe|1200.00
