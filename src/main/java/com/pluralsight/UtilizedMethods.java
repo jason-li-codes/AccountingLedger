@@ -12,87 +12,98 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+// Imports InputValidation and LedgerApp classes, which contains provide validation and code entry point
 import static com.pluralsight.InputValidation.*;
 import static com.pluralsight.LedgerApp.*;
 
+/**
+ * A collection of shared utility methods used throughout the Ledger application.
+ * Includes file loading, transaction handling, reporting, and searching, and file creation.
+ */
 public class UtilizedMethods {
 
+    /**
+     * Prompts user to enter a passcode and returns the corresponding ledger file.
+     *
+     * @return the file name of the ledger associated with the passcode.
+     */
     public static String pickLedger() {
-
+        // initializes HashMap that will hode passcodes from file
         HashMap<String, String[]> passcodes = new HashMap<>();
         String name = "";
         String fileName = "";
-
+        // Reads passcodes from the passcodes.csv file
         try (BufferedReader bufReader = new BufferedReader(new FileReader("passcodes.csv"))) {
-            // eats the first line because it is a label of file columns
-            String input = bufReader.readLine();
-
-            // while loop to read each Product object by initializing input in the conditional
+            String input = bufReader.readLine(); // Skip header
+            // Reads each line of file by defining readLine in the conditional
             while ((input = bufReader.readLine()) != null) {
-
-                // splits String along | to get info individually
+                // Splits String along pipe '|' to get info individually
                 String[] info = input.split("\\|");
-
                 passcodes.put(info[0], new String[]{info[1], info[2]});
             }
-            // if there is an exception, displays error message and sets badInput to false
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) { // Exits application if FileNotFoundException is reached
             System.out.println("Sorry, there's a problem checking passcodes, please try again later.");
             System.exit(0);
-        } catch (IOException e) {
+        } catch (IOException e) { // Exits application if IOException is reached
             System.out.println("Sorry, there was a problem accessing accounts, please try again later.");
             System.exit(1);
         }
-
+        // Uses do/while loop to with a boolean badInput to get a valid passcode from the user
         boolean badInput = false;
         do {
             System.out.println("Please enter your passcode: ");
-            String userPasscode = getValidString();
-            String[] userInfo = passcodes.get(userPasscode);
+            String userPasscode = getValidString(); // Gets user passcode with getValidString, ensuring non-empty input
+            String[] userInfo = passcodes.get(userPasscode); // Uses passcode as key to retrieve appropriate value
 
             if (userInfo != null) {
                 name = userInfo[0];
-                fileName = userInfo[1];
+                fileName = userInfo[1]; // Parses value into array of Strings
             } else {
                 System.out.println("Your passcode does not match any account we have, please try again.");
-                badInput = true;
+                badInput = true; // Sets badInput to true if key is not found in HashMap
             }
-
         } while (badInput);
 
         System.out.printf("Welcome to your Accounting Ledger, %s! ", name);
-        return fileName;
+        return fileName; // Prints welcome message and returns fileName
     }
 
+    /**
+     * Loads transaction data from a ledger file and stores it in a collection.
+     * <p>
+     * This method reads a ledger file where each line (after the header) represents a transaction.
+     * The transaction details are split by the '|' delimiter and used to create Transaction objects,
+     * which are then added to the `openLedger` list. The ledger is then reversed to ease sorting later.
+     * </p>
+     *
+     * @param fileName The name of the ledger file to be loaded.
+     */
     public static void loadLedger(String fileName) {
-
+        // Notifies user about the opening of the ledger file
         System.out.printf("Opening %s....\n", fileName);
 
         try (BufferedReader bufReader = new BufferedReader(new FileReader(fileName))) {
-            // eats the first line because it is a label of file columns
+            // Reads the first line of the file to skip the header
             String input = bufReader.readLine();
-
-            // while loop to read each Product object by initializing input in the conditional
+            // Loops through the remaining lines (transactions) in the ledger file
             while ((input = bufReader.readLine()) != null) {
-
-                // splits String along | to get info individually
+                // Splits the input line by pipe '|' to extract transaction details
                 String[] info = input.split("\\|");
-
+                // Parses the transaction date, time, and amount from the split data
                 LocalDate transDate = LocalDate.parse(info[0]);
                 LocalTime transTime = LocalTime.parse(info[1]);
                 double amount = Double.parseDouble(info[4]);
-
+                // Creates a new Transaction object with the extracted information and adds it to openLedger
                 openLedger.add(new Transaction(transDate, transTime, info[2], info[3], amount));
             }
-            // if there is an exception, displays error message and sets badInput to false
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) { // Exits application if FileNotFoundException is reached
             System.out.println("Sorry, there's a problem finding your ledger, please try again later.");
             System.exit(2);
-        } catch (IOException | DateTimeParseException e) {
+        } catch (IOException | DateTimeParseException e) { // Exits application if dates cannot be parsed
             System.out.println("Sorry, there was a problem reading your ledger, please try again later.");
             System.exit(3);
         }
-        Collections.reverse(openLedger);
+        Collections.reverse(openLedger); // Reverses ledger after loading so it is ordered from newest to earliest
     }
 
     public static void addTransaction(String type) {
