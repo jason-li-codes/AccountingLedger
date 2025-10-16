@@ -27,39 +27,47 @@ public class InputValidation {
                 System.out.println("Date set as current date, " + inputDate);
                 return inputDate;
             } else {
-                Set<DateTimeFormatter> dateFormatters = Set.of(
-                        // M/d/yy formats
-                        DateTimeFormatter.ofPattern("M/d/yy"),
-                        DateTimeFormatter.ofPattern("M-d-yy"),
-                        DateTimeFormatter.ofPattern("M.d.yy"),
-                        // M/d/yyyy formats
-                        DateTimeFormatter.ofPattern("M/d/yyyy"),
-                        DateTimeFormatter.ofPattern("M-d-yyyy"),
-                        DateTimeFormatter.ofPattern("M.d.yyyy"),
-                        // MM/dd/yy formats
-                        DateTimeFormatter.ofPattern("MM/dd/yy"),
-                        DateTimeFormatter.ofPattern("MM-dd-yy"),
-                        DateTimeFormatter.ofPattern("MM.dd.yy"),
-                        // MM/dd/yyyy formats
-                        DateTimeFormatter.ofPattern("MM/dd/yyyy"),
-                        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
-                        DateTimeFormatter.ofPattern("MM.dd.yyyy")
-                );
-                //tries to match the inputDate with the list dateFormatters
-                for (DateTimeFormatter formatter : dateFormatters) {
-                    try {
-                        return LocalDate.parse(userInputDate, formatter);
-                    } catch (DateTimeParseException e) {
-                        // tries the next format
-                    }
+                inputDate = validateDate(userInputDate);
+                if (inputDate == null) {
+                    System.out.println("You have not entered a valid date, please try again.");
+                    badInput = true;
                 }
-                System.out.println("You have not entered a valid date, please try again.");
-                badInput = true;
             }
             // conditional checks badInput boolean
         } while (badInput);
 
         return inputDate;
+    }
+
+    public static LocalDate validateDate(String date) {
+
+        Set<DateTimeFormatter> dateFormatters = Set.of(
+                // M/d/yy formats
+                DateTimeFormatter.ofPattern("M/d/yy"),
+                DateTimeFormatter.ofPattern("M-d-yy"),
+                DateTimeFormatter.ofPattern("M.d.yy"),
+                // M/d/yyyy formats
+                DateTimeFormatter.ofPattern("M/d/yyyy"),
+                DateTimeFormatter.ofPattern("M-d-yyyy"),
+                DateTimeFormatter.ofPattern("M.d.yyyy"),
+                // MM/dd/yy formats
+                DateTimeFormatter.ofPattern("MM/dd/yy"),
+                DateTimeFormatter.ofPattern("MM-dd-yy"),
+                DateTimeFormatter.ofPattern("MM.dd.yy"),
+                // MM/dd/yyyy formats
+                DateTimeFormatter.ofPattern("MM/dd/yyyy"),
+                DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+                DateTimeFormatter.ofPattern("MM.dd.yyyy")
+        );
+        //tries to match the inputDate with the list dateFormatters
+        for (DateTimeFormatter formatter : dateFormatters) {
+            try {
+                return LocalDate.parse(date, formatter);
+            } catch (DateTimeParseException e) {
+                // tries the next format
+            }
+        }
+        return null;
     }
 
     public static LocalTime getValidTime() {
@@ -79,32 +87,11 @@ public class InputValidation {
                 System.out.println("Time set as current time, " + inputTime);
                 return inputTime;
             } else {
-                Set<DateTimeFormatter> timeFormatters = Set.of(
-                        // 24-hour formatters
-                        DateTimeFormatter.ofPattern("H:mm"),
-                        DateTimeFormatter.ofPattern("HH:mm"),
-                        DateTimeFormatter.ofPattern("H-mm"),
-                        DateTimeFormatter.ofPattern("HH-mm"),
-                        DateTimeFormatter.ofPattern("H.mm"),
-                        DateTimeFormatter.ofPattern("HH.mm"),
-                        // 12-hour formatters with AM/PM
-                        DateTimeFormatter.ofPattern("h:mm a"),
-                        DateTimeFormatter.ofPattern("hh:mm a"),
-                        DateTimeFormatter.ofPattern("h-mm a"),
-                        DateTimeFormatter.ofPattern("hh-mm a"),
-                        DateTimeFormatter.ofPattern("h.mm a"),
-                        DateTimeFormatter.ofPattern("hh.mm a")
-                );
-                //tries to match the inputDate with the list dateFormatters
-                for (DateTimeFormatter formatter : timeFormatters) {
-                    try {
-                        return LocalTime.parse(userInputTime, formatter);
-                    } catch (DateTimeParseException e) {
-                        // tries the next format
-                    }
+                inputTime = validateTime(userInputTime);
+                if (inputTime == null) {
+                    System.out.println("You have not entered a valid date, please try again.");
+                    badInput = true;
                 }
-                System.out.println("You have not entered a valid time, please try again.");
-                badInput = true;
             }
             // conditional checks badInput boolean
         } while (badInput);
@@ -112,37 +99,74 @@ public class InputValidation {
         return inputTime;
     }
 
+    public static LocalTime validateTime(String time) {
+
+        Set<DateTimeFormatter> timeFormatters = Set.of(
+                // 24-hour formatters
+                DateTimeFormatter.ofPattern("H:mm"),
+                DateTimeFormatter.ofPattern("HH:mm"),
+                DateTimeFormatter.ofPattern("H-mm"),
+                DateTimeFormatter.ofPattern("HH-mm"),
+                DateTimeFormatter.ofPattern("H.mm"),
+                DateTimeFormatter.ofPattern("HH.mm"),
+                // 12-hour formatters with AM/PM
+                DateTimeFormatter.ofPattern("h:mm a"),
+                DateTimeFormatter.ofPattern("hh:mm a"),
+                DateTimeFormatter.ofPattern("h-mm a"),
+                DateTimeFormatter.ofPattern("hh-mm a"),
+                DateTimeFormatter.ofPattern("h.mm a"),
+                DateTimeFormatter.ofPattern("hh.mm a")
+        );
+        //tries to match the inputDate with the list dateFormatters
+        for (DateTimeFormatter formatter : timeFormatters) {
+            try {
+                return LocalTime.parse(time, formatter);
+            } catch (DateTimeParseException e) {
+                // tries the next format
+            }
+        }
+        return null;
+    }
+
     public static double getValidDouble() {
 
         // initializes inputDouble and boolean badInput
-        double inputDouble = 0;
+        String userInputDouble = null;
+        Double inputDouble = null;
         boolean badInput = false;
 
         // uses do/while loop
         do {
-
             // sets badInput to false first
             badInput = false;
 
             //tries to get a double
-            try {
-                inputDouble = input.nextDouble();
-                // rounds it to have 2 decimal points
+            userInputDouble = input.nextLine();
+            inputDouble = validateDouble(userInputDouble);
+            // rounds it to have 2 decimal points
+            if (inputDouble != null) {
                 inputDouble = Math.round(inputDouble * 100) / 100.0;
-                System.out.printf("Your input has been rounded to %.2f. \n", inputDouble);
-                // if it can't read as double, throws exception with error message and sets badInput to try again
-            } catch (Exception e) {
+                return inputDouble;
+            } else {
                 System.out.println("Sorry I don't know what you mean, please try again.");
                 badInput = true;
             }
-            // eats buffer
-            input.nextLine();
             // conditional checks badInput boolean
         } while (badInput);
 
         // returns the correct inputDouble as a double
         return inputDouble;
     }
+
+    public static Double validateDouble(String num) {
+
+        try {
+            return Double.parseDouble(num);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     public static String getValidString() {
 
