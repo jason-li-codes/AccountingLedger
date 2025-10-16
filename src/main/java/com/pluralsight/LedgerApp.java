@@ -121,10 +121,10 @@ public class LedgerApp {
                     runReportDefault("prevYear");
                     break;
                 case '5':
-                    searchByVendor();
+                    runReportByVendor();
                     break;
                 case '6':
-                    runReportCustom();
+                    gatherInfoCustomSearch();
                     break;
                 case '7':
                     System.out.println("Returning to main menu....");
@@ -135,7 +135,82 @@ public class LedgerApp {
 
     }
 
+    public static void gatherInfoCustomSearch() {
 
+        System.out.println("Let's get information about this custom search.");
+
+        LocalDate startDateInput = null;
+        System.out.println("What is the starting date you would like to search up to?");
+        String startDateInputStr = input.nextLine().trim();
+        if (!startDateInputStr.isEmpty()) {
+            startDateInput = validateDate(startDateInputStr);
+        }
+
+        LocalDate endDateInput = null;
+        System.out.println("What is the ending date you would like to search down to?");
+        String endDateInputStr = input.nextLine().trim();
+        if (!endDateInputStr.isEmpty()) {
+            endDateInput = validateDate(endDateInputStr);
+        }
+
+        LocalTime startTimeInput = null;
+        System.out.println("What is the starting time you would like to search up to?");
+        String startTimeInputStr = input.nextLine().trim();
+        if (!startTimeInputStr.isEmpty()) {
+            startTimeInput = validateTime(startTimeInputStr);
+        }
+
+        LocalTime endTimeInput = null;
+        System.out.println("What is the ending time you would like to search down to?");
+        String endTimeInputStr = input.nextLine().trim();
+        if (!endTimeInputStr.isEmpty()) {
+            endTimeInput = validateTime(endTimeInputStr);
+        }
+
+        System.out.println("What description matches your query?");
+        String descriptionInput = input.nextLine().trim();
+
+        System.out.println("What vendor matches your query?");
+        String vendorInput = input.nextLine().trim();
+
+        Double amountMinInput = null;
+        System.out.println("What is the minimum transaction you are looking for?");
+        String amountMinInputStr = input.nextLine();
+        if (amountMinInputStr != null) {
+            amountMinInput = validateDouble(amountMinInputStr);
+        }
+
+        Double amountMaxInput = null;
+        System.out.println("What is the maximum transaction you are looking for?");
+        String amountMaxInputStr = input.nextLine();
+        if (amountMaxInputStr != null) {
+            amountMaxInput = validateDouble(amountMaxInputStr);
+        }
+
+        runReportCustom(startDateInput, endDateInput, startTimeInput, endTimeInput,
+                descriptionInput, vendorInput, amountMaxInput, amountMaxInput);
+
+    }
+
+    public static void runReportCustom(LocalDate startDate, LocalDate endDate, LocalTime startTime,
+                                       LocalTime endTime, String description, String vendor,
+                                       Double amountMin, Double amountMax) {
+
+        System.out.println("Searching....");
+        ArrayList<Transaction> filteredList = (ArrayList<Transaction>) openLedger.stream()
+                .filter(t -> (startDate == null || !t.getTransactionDate().isBefore(startDate)) &&
+                        (endDate == null || !t.getTransactionDate().isAfter(endDate)))
+                .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
+                        (endTime == null || !t.getTransactionTime().isAfter(endTime)))
+                .filter(t -> (description.isEmpty() || t.getDescription().contains(description)))
+                .filter(t -> (vendor.isEmpty() || t.getVendor().contains(vendor)))
+                .filter(t -> (amountMin == null || t.getAmount() >= amountMin))
+                .filter(t -> (amountMax == null || t.getAmount() <= amountMax))
+                .toList();
+
+        displayEntries(filteredList);
+
+    }
 
 
     public static void runReportDefault(String type) {
@@ -152,7 +227,7 @@ public class LedgerApp {
                 break;
             case "prevMonth":
                 startDate = startDate.minusMonths(1).withDayOfMonth(1);
-                endDate = endDate.minusMonths(1).withDayOfMonth(endDate.lengthOfMonth());
+                endDate = endDate.minusMonths(1).withDayOfMonth(endDate.minusMonths(1).lengthOfMonth());
                 break;
             case "prevYear":
                 startDate = startDate.minusYears(1).withDayOfYear(1);
@@ -170,15 +245,18 @@ public class LedgerApp {
         displayEntries(filteredLedgerByTime);
         System.out.println("Searching complete.");
 
-        System.out.println("""
-                Would you like a file of this report?
-                (Y) Yes
-                (N) No, return to main menu""");
-        if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
-            createFile(filteredLedgerByTime, type);
+        if (!filteredLedgerByTime.isEmpty()) {
+            System.out.println("""
+                    Would you like a file of this report?
+                    (Y) Yes
+                    (N) No, return to main menu""");
+            if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
+                createFile(filteredLedgerByTime, type);
+            }
         } else {
-            System.out.println("Returning to main menu....");
+            System.out.println("There are no transactions to display.");
         }
+        System.out.println("Returning to main menu....");
     }
 
     public static void createFile(ArrayList<Transaction> list, String type) {
@@ -204,24 +282,27 @@ public class LedgerApp {
         ArrayList<Transaction> filteredLedgerByType = null;
         if (Objects.equals(type, "deposit")) {
             filteredLedgerByType =
-                    (ArrayList<Transaction>)openLedger.stream().filter(t -> t.getAmount() > 0).toList();
+                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() > 0).toList();
         } else {
             filteredLedgerByType =
-                    (ArrayList<Transaction>)openLedger.stream().filter(t -> t.getAmount() < 0).toList();
+                    (ArrayList<Transaction>) openLedger.stream().filter(t -> t.getAmount() < 0).toList();
         }
 
         displayEntries(filteredLedgerByType);
         System.out.println("Searching complete.");
 
-        System.out.println("""
-                Would you like a file of this report?
-                (Y) Yes
-                (N) No, return to main menu""");
-        if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
-            createFile(filteredLedgerByType, type);
+        if (!filteredLedgerByType.isEmpty()) {
+            System.out.println("""
+                    Would you like a file of this report?
+                    (Y) Yes
+                    (N) No, return to main menu""");
+            if (getValidMenuChar(Set.of('Y', 'N')) == 'Y') {
+                createFile(filteredLedgerByType, type);
+            }
         } else {
-            System.out.println("Returning to main menu....");
+            System.out.printf("There are no %ss to display.", type);
         }
+        System.out.println("Returning to main menu....");
     }
 
     public static void displayEntries(ArrayList<Transaction> list) {
