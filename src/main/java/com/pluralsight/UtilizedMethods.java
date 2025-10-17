@@ -24,11 +24,9 @@ public class UtilizedMethods {
 
     /**
      * Prompts user to enter a passcode and returns the corresponding ledger file.
-     *
-     * @return the file name of the ledger associated with the passcode.
      */
     public static String pickLedger() {
-        // initializes HashMap that will hode passcodes from file
+        // initializes HashMap that holds passcodes from file
         HashMap<String, String[]> passcodes = new HashMap<>();
         String name = "";
         String fileName = "";
@@ -73,8 +71,6 @@ public class UtilizedMethods {
      * This method reads a ledger file where each line (after the header) represents a transaction.
      * The transaction details are split by the '|' delimiter and used to create Transaction objects,
      * which are then added to the `openLedger` list. The ledger is then reversed to ease sorting later.
-     *
-     * @param fileName The name of the ledger file to be loaded.
      */
     public static void loadLedger(String fileName) {
         // Notifies user about the opening of the ledger file
@@ -110,8 +106,6 @@ public class UtilizedMethods {
      * The method ensures that the user provides valid input for the transaction date, time, description,
      * vendor, and amount. The user is also given the option to review and confirm the transaction before
      * adding it to ledger. The transaction is inserted in chronological order within the ledger.
-     *
-     * @param type The type of the transaction (either "deposit" or "payment").
      */
     public static void addTransaction(String type) {
         // Informs the user that the program is ready to collect transaction information
@@ -190,9 +184,6 @@ public class UtilizedMethods {
      * If the index is 0, the method appends the transaction to the end of the file.
      * If the index is not 0, the method rewrites the entire ledger file, ensuring the transactions are written
      * in reverse chronological order.
-     *
-     * @param index The index where the transaction should be inserted. If index is 0, the transaction is appended.
-     * @param t The transaction to be written to the CSV file.
      */
     public static void writeToCsvFile(int index, Transaction t) {
         // Appends the new transaction to the end of the file if transaction is most recent
@@ -231,8 +222,6 @@ public class UtilizedMethods {
      * This method formats the data from the transactions in the provided ledger and
      * prints it to the console in a readable table format with columns for date, time, description,
      * vendor, and amount.
-     *
-     * @param ledger The list of transactions to be displayed.
      */
     public static void displayEntries(ArrayList<Transaction> ledger) {
         // Prints the header for the table with column names and appropriate spacing
@@ -251,8 +240,6 @@ public class UtilizedMethods {
      * Displays entries filtered by transaction type ("deposit" or "payment").
      * This method searches for all transactions of a specified type ("deposit" or "payment")
      * and passes the parameters to another method runReportCustom to handle filtering and report generation.
-     *
-     * @param type The type of transaction to search for.
      */
     public static void displayEntriesByType(String type) {
         // Informs user system is searching for all entries of specified type
@@ -271,8 +258,6 @@ public class UtilizedMethods {
      * with the appropriate date range based on the type.
      * The method calculates the start and end dates for each report type and then invokes
      * runReportCustom with those dates to generate the report.
-     *
-     * @param type The type of report to generate (e.g., "monthToDate", "yearToDate", "previousMonth", "previousYear").
      */
     public static void runReportDefault(String type) {
         // Adjusts the start and end dates based on the report type
@@ -391,16 +376,6 @@ public class UtilizedMethods {
      * This method filters the ledger based on the provided parameters (date range, time range,
      * description, vendor, and amount) and displays the filtered results. If any matching transactions
      * are found, the user is given the option to save the report to a file.
-     *
-     * @param type         The type of report (e.g., "custom").
-     * @param startDate    The starting date for the transaction filter (can be null for no date filter).
-     * @param endDate      The ending date for the transaction filter (can be null for no date filter).
-     * @param startTime    The starting time for the transaction filter (can be null for no time filter).
-     * @param endTime      The ending time for the transaction filter (can be null for no time filter).
-     * @param description  The description keyword to search for (can be null or empty for no description filter).
-     * @param vendor       The vendor keyword to search for (can be null or empty for no vendor filter).
-     * @param amountMin    The minimum amount for the transaction filter (can be null for no minimum filter).
-     * @param amountMax    The maximum amount for the transaction filter (can be null for no maximum filter).
      */
     public static void runReportCustom(String type, LocalDate startDate, LocalDate endDate, LocalTime startTime,
                                        LocalTime endTime, String description, String vendor,
@@ -443,9 +418,6 @@ public class UtilizedMethods {
      * This method generates a file name based on the current timestamp and the report type (e.g., "custom"),
      * and writes the filtered ledger transactions to that file in CSV format. Each transaction's details
      * (date, time, description, vendor, and amount) are written as a new line in the file.
-     *
-     * @param filteredLedger The list of filtered transactions to be saved to the file.
-     * @param type           The type of the report (e.g., "custom", "monthly", etc.), used in the file name.
      */
     public static void createFile(ArrayList<Transaction> filteredLedger, String type) {
         // Generates a formatted timestamp for the as newFileName

@@ -15,8 +15,6 @@ public class InputValidation {
     /**
      * Prompts the user for a valid date until a proper one is entered.
      * Supports multiple date formats with month, then day, then year, with all supported delimiters.
-     *
-     * @return A valid LocalDate object entered by the user.
      */
     public static LocalDate getValidDate() {
 
@@ -42,9 +40,6 @@ public class InputValidation {
     /**
      * Attempts to parse the user-provided date string using a set of supported formats.
      * If the input starts with 'N' or 'n' for "now", it returns the current date.
-     *
-     * @param date The input date string.
-     * @return A LocalDate if parsing succeeds; null otherwise.
      */
     public static LocalDate attemptParseDate(String date) {
 
@@ -88,8 +83,6 @@ public class InputValidation {
     /**
      * Prompts the user for a valid time until a proper one is entered.
      * Supports both 12-hour and 24-hour formats, with all supported delimiters.
-     *
-     * @return A valid LocalTime object entered by the user.
      */
     public static LocalTime getValidTime() {
 
@@ -115,9 +108,6 @@ public class InputValidation {
     /**
      * Attempts to parse the user-provided time string using a set of time formats.
      * If input starts with 'N' or 'n' for "now", returns the current time.
-     *
-     * @param time The input time string.
-     * @return A LocalTime if parsing succeeds; null otherwise.
      */
     public static LocalTime attemptParseTime(String time) {
 
@@ -159,8 +149,6 @@ public class InputValidation {
     /**
      * Prompts the user until a valid decimal number (double) is entered.
      * Rounds the result to two decimal places.
-     *
-     * @return A valid double value entered by the user.
      */
     public static double getValidDouble() {
 
@@ -188,9 +176,6 @@ public class InputValidation {
 
     /**
      * Tries to parse a String into a Double.
-     *
-     * @param num The string to parse.
-     * @return A Double if parsing is successful; null otherwise.
      */
     public static Double attemptParseDouble(String num) {
 
@@ -203,8 +188,6 @@ public class InputValidation {
 
     /**
      * Prompts the user until a non-empty string is entered.
-     *
-     * @return A non-empty, trimmed string input by the user.
      */
     public static String getValidString() {
 

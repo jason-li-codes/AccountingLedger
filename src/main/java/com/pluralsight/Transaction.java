@@ -17,12 +17,6 @@ public class Transaction {
 
     /**
      * Constructor to initialize all fields of the transaction.
-     *
-     * @param transactionDate The date of the transaction.
-     * @param transactionTime The time of the transaction.
-     * @param description     A brief description of the transaction.
-     * @param vendor          The vendor involved in the transaction.
-     * @param amount          The monetary amount (positive or negative).
      */
     public Transaction(LocalDate transactionDate, LocalTime transactionTime, String description, String vendor, double amount) {
         this.transactionDate = transactionDate;
@@ -34,8 +28,6 @@ public class Transaction {
 
     /**
      * Returns the date of the transaction.
-     *
-     * @return LocalDate representing the transaction date.
      */
     public LocalDate getTransactionDate() {
         return transactionDate;
@@ -43,8 +35,6 @@ public class Transaction {
 
     /**
      * Sets the transaction date.
-     *
-     * @param transactionDate A LocalDate object representing the new transaction date.
      */
     public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
@@ -52,8 +42,6 @@ public class Transaction {
 
     /**
      * Returns the time of the transaction.
-     *
-     * @return LocalTime representing the transaction time.
      */
     public LocalTime getTransactionTime() {
         return transactionTime;
@@ -61,8 +49,6 @@ public class Transaction {
 
     /**
      * Sets the transaction time.
-     *
-     * @param transactionTime A LocalTime object representing the new transaction time.
      */
     public void setTransactionTime(LocalTime transactionTime) {
         this.transactionTime = transactionTime;
@@ -70,8 +56,6 @@ public class Transaction {
 
     /**
      * Returns the transaction's description.
-     *
-     * @return A String describing the transaction.
      */
     public String getDescription() {
         return description;
@@ -79,8 +63,6 @@ public class Transaction {
 
     /**
      * Sets the transaction description.
-     *
-     * @param description A String describing the transaction.
      */
     public void setDescription(String description) {
         this.description = description;
@@ -88,8 +70,6 @@ public class Transaction {
 
     /**
      * Returns the vendor associated with the transaction.
-     *
-     * @return A String with the vendor name.
      */
     public String getVendor() {
         return vendor;
@@ -97,8 +77,6 @@ public class Transaction {
 
     /**
      * Sets the vendor name for the transaction.
-     *
-     * @param vendor A String with the vendor name.
      */
     public void setVendor(String vendor) {
         this.vendor = vendor;
@@ -106,8 +84,6 @@ public class Transaction {
 
     /**
      * Returns the monetary amount of the transaction.
-     *
-     * @return A double representing the transaction amount.
      */
     public double getAmount() {
         return amount;
@@ -115,8 +91,6 @@ public class Transaction {
 
     /**
      * Sets the transaction amount.
-     *
-     * @param amount A double value representing the transaction amount.
      */
     public void setAmount(double amount) {
         this.amount = amount;
@@ -124,8 +98,6 @@ public class Transaction {
 
     /**
      * Converts the transaction data to a CSV-formatted string using pipe as a delimiter for documentary purposes.
-     *
-     * @return A single-line String in CSV format representing the transaction.
      */
     public String convertToCsvFormat() {
         return String.join("|", this.transactionDate.toString(), this.transactionTime.toString(),

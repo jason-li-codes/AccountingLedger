@@ -27,8 +27,6 @@ public class LedgerApp {
     /**
      * Entry point of the application. Loads the ledger file,
      * and displays the main menu in a loop until the user exits.
-     *
-     * @param args Command-line arguments (not used).
      */
     public static void main(String[] args) {
         // Prompts user to select a ledger file
