@@ -170,6 +170,7 @@ Upon launching, the application will prompt you to select a ledger file by enter
 After a successful login, the main menu is displayed:
 
 ```
+================== MAIN MENU ==================
 Please select an option from the following menu:
 (D) Add deposit
 (P) Add payment
