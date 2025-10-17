@@ -111,10 +111,10 @@ AccountingLedger/
         └── java/
             └── com/
                 └── pluralsight/
-                    ├── InputValidation.java  // Utility methods for robust user input parsing and validation (dates, times, doubles, strings)
-                    ├── LedgerApp.java        // The main class containing the entry point (main method) and menu logic
+                    ├── InputValidation.java  // Methods for robust user input parsing and validation
+                    ├── LedgerApp.java        // The main class containing entry point (main method) and menu logic
                     ├── Transaction.java      // The data model class for a single financial transaction
-                    └── UtilizedMethods.java  // Contains the core application logic: file loading, report generation, and transaction insertion
+                    └── UtilizedMethods.java  // Contains core application logic, e.g. file loading, report generation
 ```
 
 ## 🔍 Interesting Code: Dynamic Filtering with Streams
