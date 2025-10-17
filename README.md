@@ -177,13 +177,13 @@ The `displayEntries` method generates a tabular, formatted list of transactions.
 
 ```
 Searching....
-Date         Time      Description                             Vendor              Amount
-+------------+----------+---------------------------------------+------------------------+--------------+
-|2024-08-25  |13:10:11  |payment received                        |PayPal              |      500.00|
-|2024-08-10  |07:45:10  |coffee                                  |Starbucks           |       -5.45|
-|2024-07-26  |16:30:41  |music subscription                      |Spotify             |       -9.99|
-|2024-07-11  |09:55:55  |groceries                               |Walmart             |      -78.50|
-+------------+----------+---------------------------------------+------------------------+--------------+
+Date         Time       Description                             Vendor              Amount
++------------+----------+---------------------------------------+--------------------+--------------+
+|2024-08-25  |13:10:11  |payment received                       |PayPal              |      500.00|
+|2024-08-10  |07:45:10  |coffee                                 |Starbucks           |       -5.45|
+|2024-07-26  |16:30:41  |music subscription                     |Spotify             |       -9.99|
+|2024-07-11  |09:55:55  |groceries                              |Walmart             |      -78.50|
++------------+----------+---------------------------------------+--------------------+--------------+
 Searching complete.
 Returning to previous menu....
 ```
