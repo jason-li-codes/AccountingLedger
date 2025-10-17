@@ -6,11 +6,11 @@ A command-line Java application designed to manage and track financial transacti
 
 ## 📑 Table of Contents
 
-  * [Features](#Features)
-  * [Technologies](#Technologies)
-  * [Setup & Installation](#Setup-&-Installation)
-  * [Project Structure](#Project-Structure)
-  * [Usage](#Usage)
+  * [Features](#-features)
+  * [Technologies](#-technologies)
+  * [Setup & Installation](#-setup-&-Installation)
+  * [Project Structure](#-project-Structure)
+  * [Usage](#-usage)
 
 -----
 
