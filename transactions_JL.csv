@@ -13,8 +13,8 @@ date|time|description|vendor|amount
 2023-10-10|15:40:55|Invoice 1003 paid|Joe|1350.00
 2023-10-25|10:13:11|iPhone 14|Apple|-999.00
 2023-11-11|09:20:33|coffee|Starbucks|-5.75
-2023-11-28|13:15:00|groceries|Walmart|-91.12
-2023-12-15|12:00:00|payment received|PayPal|450.00
+2023-11-28|13:15:45|groceries|Walmart|-91.12
+2023-12-15|12:00:37|payment received|PayPal|450.00
 2023-12-30|11:45:45|gas|Shell|-63.20
 2024-01-15|10:35:26|electronics|Best Buy|-89.99
 2024-01-30|17:22:55|music subscription|Spotify|-9.99
@@ -24,7 +24,7 @@ date|time|description|vendor|amount
 2024-03-28|19:30:45|ride fare|Uber|-22.40
 2024-04-12|06:45:34|monthly subscription|Netflix|-15.99
 2024-04-27|11:25:21|tools|Home Depot|-72.10
-2024-05-12|15:00:00|payment received|Stripe|890.00
+2024-05-12|15:00|payment received|Stripe|890.00
 2024-05-27|14:05:22|bulk groceries|Costco|-117.35
 2024-06-11|12:35:12|handmade gift|Etsy|-29.00
 2024-06-26|17:15:30|Invoice 1005 paid|Joe|1750.00
@@ -43,7 +43,7 @@ date|time|description|vendor|amount
 2025-01-07|07:40:40|coffee|Starbucks|-6.35
 2025-01-22|15:05:10|storage subscription|Dropbox|-9.99
 2025-02-06|09:55:09|tools|Home Depot|-53.25
-2025-02-21|10:45:00|bulk groceries|Costco|-138.40
+2025-02-21|10:45|bulk groceries|Costco|-138.40
 2025-03-08|18:25:17|ride fare|Uber|-21.60
 2025-03-23|14:35:26|Invoice 1007 paid|Joe|1950.00
 2025-04-07|12:22:55|music subscription|Spotify|-9.99
