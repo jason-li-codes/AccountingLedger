@@ -10,8 +10,8 @@ A command-line Java application designed to manage and track financial transacti
   * [Technologies](#%EF%B8%8F-technologies)
   * [Setup & Installation](#-setup--installation)
   * [Project Structure](#-project-structure)
-  * [Application Screens](#-application-screens)
-  * [Code Highlight: Dynamic Filtering with Streams](#-code-highlight-filtering-with-streams)
+  * [Application Screens](#%EF%B8%8F-application-screens)
+  * [Code Highlight: Dynamic Filtering with Streams](#-code-highlight-dynamic-filtering-with-streams)
   * [Usage](#-usage)
 
 -----
@@ -186,7 +186,7 @@ Returning to previous menu....
 
 -----
 
-## 🔍 Interesting Code: Dynamic Filtering with Streams
+## 🔍 Code Highlight: Dynamic Filtering with Streams
 
 The `runReportCustom` method in `UtilizedMethods.java` demonstrates a clean and efficient way to handle complex, optional filtering using **Java Streams**. This single block of code handles all seven possible filtering parameters (date range, time range, description, vendor, and amount range).
 
