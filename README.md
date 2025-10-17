@@ -116,6 +116,7 @@ AccountingLedger/
                     ├── Transaction.java      // The data model class for a single financial transaction
                     └── UtilizedMethods.java  // Contains core application logic, e.g. file loading, report generation
 ```
+-----
 
 ## 🔍 Interesting Code: Dynamic Filtering with Streams
 
