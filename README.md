@@ -116,8 +116,8 @@ Generate detailed financial reports using several filtering options:
 
 Upon launching, the application will prompt you to select a ledger file by entering a **passcode**.
 
-| Passcode | Name | Ledger File |
-| :---: | :---: | :---: |
+| Passcode | Ledger File |
+| :---: | :---: |
 | `12345` | `transactions_JL.csv` |
 | `23456` | `transactions_AM.csv` |
 | `34567` | `transactions_JG.csv` |
