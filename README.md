@@ -21,85 +21,56 @@ A command-line Java application designed to manage and track financial transacti
 
 ## ✨ Features
 
-🔐 Secure Login
+### 🔐 Secure Login
+- Users authenticate using a **passcode**, which is mapped to a specific ledger file (e.g., `transactions_JL.csv`).
+- This ensures that only the correct ledger is loaded for each individual user.
 
-Users authenticate using a passcode, which is mapped to a specific ledger file (e.g., transactions_JL.csv).
+### ➕ Add Transactions
+- Users can add new transactions through the main menu:
+  - **(D) Add Deposit:** Records an incoming transaction (positive amount).
+  - **(P) Add Payment:** Records an outgoing transaction (negative amount).
+- Users can specify a custom date or enter **`N`** to auto-fill the current date and time.
 
-This ensures that only the correct ledger is loaded for each individual user.
-
-➕ Add Transactions
-
-Users can add new transactions through the main menu:
-
-(D) Add Deposit: Records an incoming transaction (positive amount).
-
-(P) Add Payment: Records an outgoing transaction (negative amount).
-
-Users can specify a custom date or enter N to auto-fill the current date and time.
-
-📋 View Ledger
-
+### 📋 View Ledger
 View and filter transactions using the ledger menu:
+- **(A)** Show **all** transactions.
+- **(D)** Show **only deposits**.
+- **(P)** Show **only payments**.
+- **(R)** Access the **Reports Menu** for advanced reporting.
+- **(H)** Return to the **Main Menu**.
 
-(A) Show all transactions.
-
-(D) Show only deposits.
-
-(P) Show only payments.
-
-(R) Access the Reports Menu for advanced reporting.
-
-(H) Return to the Main Menu.
-
-📊 Reports Generation
-
+### 📊 Reports Generation
 Generate detailed financial reports using several filtering options:
 
-Default Reports:
+#### Default Reports
+- **(1)** Month to Date
+- **(2)** Previous Month
+- **(3)** Year to Date
+- **(4)** Previous Year
 
-(1) Month to Date
+#### Advanced Filtering
+- **(5)** Search by Vendor: Filter transactions by a specific vendor name (e.g., “Amazon”).
+- **(6)** Custom Search: Define your own filters:
+  - Date range
+  - Time range
+  - Description keywords
+  - Vendor
+  - Amount range (min/max)
 
-(2) Previous Month
+- **(7)** Return to Ledger Menu
 
-(3) Year to Date
+### 💾 Data Persistence
+- Transactions are stored in a **pipe-delimited CSV** file (e.g., `transactions_JL.csv`).
+- Files are **loaded at login** and **saved upon transaction addition** or **report generation**.
+- Ensures data is preserved between sessions.
 
-(4) Previous Year
+### 📝 Report Exporting
+- Every generated report can be saved as a **new CSV file**, automatically named with:
+  - A timestamp
+  - The type of report  
+  (e.g., `yearToDate_20251015_1430_Transactions_JL.csv`)
 
-Search by Vendor:
-
-(5) Filter transactions by a specific vendor name (e.g., “Amazon”).
-
-Custom Search:
-
-(6) Define your own filters:
-
-Date range
-
-Time range
-
-Description keywords
-
-Vendor
-
-Amount range (minimum and/or maximum)
-
-(7) Return to Ledger Menu
-
-💾 Data Persistence
-
-Transactions are stored in a pipe-delimited CSV file (e.g., transactions_JL.csv).
-
-Files are loaded at login and saved upon transaction addition or report generation.
-
-Ensures data is preserved between sessions.
-
-📝 Report Exporting
-
-Every generated report can be saved as a new CSV file, automatically named with:
-
-A timestamp
-
-The type of report (e.g., yearToDate_20251015_1430_Transactions_JL.csv)
+---
 
 -----
 
@@ -128,15 +99,6 @@ The type of report (e.g., yearToDate_20251015_1430_Transactions_JL.csv)
     Use Maven to compile the Java code and package it into an executable JAR file.
     ```bash
     mvn clean package
-    ```
-3. **Project Structure:**
-   ```bash
-   com/
-└── pluralsight/
-    ├── LedgerApp.java          # Main application entry point
-    ├── Transaction.java        # Transaction object class (not shown here)
-    ├── UtilizedMethods.java    # Utility methods for input, loading/saving, reporting
-    └── transactions_XX.csv     # Ledger files per user (pipe-delimited CSV)
     ```
 
 ### Running the Application
