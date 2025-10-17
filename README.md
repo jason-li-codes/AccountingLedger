@@ -10,6 +10,7 @@ A command-line Java application designed to manage and track financial transacti
   * [Technologies](#%EF%B8%8F-technologies)
   * [Setup & Installation](#-setup--installation)
   * [Project Structure](#-project-structure)
+  * [Code Highlight: Dynamic Filtering with Streams](#-interesting-code-dynamic-filtering-with-streams)
   * [Usage](#-usage)
 
 -----
@@ -114,6 +115,34 @@ AccountingLedger/
                     ├── LedgerApp.java        // The main class containing the entry point (main method) and menu logic
                     ├── Transaction.java      // The data model class for a single financial transaction
                     └── UtilizedMethods.java  // Contains the core application logic: file loading, report generation, and transaction insertion
+```
+
+## 🔍 Interesting Code: Dynamic Filtering with Streams
+
+The `runReportCustom` method in `UtilizedMethods.java` demonstrates a clean and efficient way to handle complex, optional filtering using **Java Streams**. This single block of code handles all seven possible filtering parameters (date range, time range, description, vendor, and amount range).
+
+The key is the structure of the `filter` condition: `(parameter == null || condition)`. If the search parameter is null (meaning the user didn't specify a filter for that field), the stream condition is always `true`, and the transactions are passed through. If the parameter is present, the specific condition is applied.
+
+```java
+// Snippet from UtilizedMethods.java
+public static void runReportCustom(String type, LocalDate startDate, LocalDate endDate, LocalTime startTime,
+                                       LocalTime endTime, String description, String vendor,
+                                       Double amountMin, Double amountMax) {
+        // Filters ledger using the provided parameters
+        ArrayList<Transaction> filteredLedger = (ArrayList<Transaction>) openLedger.stream()
+                .filter(t -> (startDate == null || !t.getTransactionDate().isBefore(startDate)) &&
+                        (endDate == null || !t.getTransactionDate().isAfter(endDate))) // Filters by date range
+                .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
+                        (endTime == null || !t.getTransactionTime().isAfter(endTime))) // Filters by time range
+                .filter(t -> (description == null || description.isEmpty() ||
+                        t.getDescription().toLowerCase().contains(description)))  // Filters by description
+                .filter(t -> (vendor == null || vendor.isEmpty() ||
+                        t.getVendor().toLowerCase().contains(vendor))) // Filters by vendor
+                .filter(t -> (amountMin == null || t.getAmount() >= amountMin))
+                .filter(t -> (amountMax == null || t.getAmount() <= amountMax)) // Filters by amount
+                .collect(Collectors.toCollection(ArrayList::new)); // Collects filtered results into ArrayList
+        // ... rest of method
+}
 ```
 
 -----
