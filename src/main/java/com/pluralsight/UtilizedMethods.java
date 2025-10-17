@@ -227,13 +227,13 @@ public class UtilizedMethods {
         // Prints the header for the table with column names and appropriate spacing
         System.out.printf("%-12s %-10s %-40s %-20s %12s%n", "Date", "Time", "Description", "Vendor", "Amount");
         // Prints a separator line to distinguish header from data
-        System.out.println("+------------+----------+---------------------------------------+------------------------+--------------+");
+        System.out.println("+------------+----------+----------------------------------------+--------------------+--------------+");
         for (Transaction t : ledger) { // Iterates through each transaction in ledger and print details with spacing
             System.out.printf("|%-12s|%-10s|%-40s|%-20s|%12.2f|\n",
                     t.getTransactionDate(), t.getTransactionTime(), t.getDescription(), t.getVendor(), t.getAmount());
         }
         // Prints closing separator line after displaying transactions
-        System.out.println("+------------+----------+---------------------------------------+------------------------+--------------+");
+        System.out.println("+------------+----------+----------------------------------------+--------------------+--------------+");
     }
 
     /**
@@ -305,7 +305,7 @@ public class UtilizedMethods {
      */
     public static void gatherInfoCustomSearch() {
 
-        System.out.println("Let's get information about this custom search.");
+        System.out.println("Let's get information about this custom search. Press enter to skip any question.");
         // Prompts user for the starting and ending dates of the search range
         LocalDate startDateInput;
         System.out.println("Enter the starting date you would like to search up to, or (N) for \"now\": ");
