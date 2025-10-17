@@ -43,37 +43,39 @@ public class InputValidation {
      */
     public static LocalDate attemptParseDate(String date) {
 
-        // Checks if input begins with an 'N' or 'n', and returns currentDate if so
-        if (Character.toUpperCase(date.charAt(0)) == 'N') {
-            LocalDate currentDate = LocalDate.now();
-            System.out.println("Date set as current date, " + currentDate);
-            return currentDate;
-        } else {
-            // Set of DateTimeFormatters for all supported delimiters
-            Set<DateTimeFormatter> dateFormatters = Set.of(
-                    // M/d/yy formats
-                    DateTimeFormatter.ofPattern("M/d/yy"),
-                    DateTimeFormatter.ofPattern("M-d-yy"),
-                    DateTimeFormatter.ofPattern("M.d.yy"),
-                    // M/d/yyyy formats
-                    DateTimeFormatter.ofPattern("M/d/yyyy"),
-                    DateTimeFormatter.ofPattern("M-d-yyyy"),
-                    DateTimeFormatter.ofPattern("M.d.yyyy"),
-                    // MM/dd/yy formats
-                    DateTimeFormatter.ofPattern("MM/dd/yy"),
-                    DateTimeFormatter.ofPattern("MM-dd-yy"),
-                    DateTimeFormatter.ofPattern("MM.dd.yy"),
-                    // MM/dd/yyyy formats
-                    DateTimeFormatter.ofPattern("MM/dd/yyyy"),
-                    DateTimeFormatter.ofPattern("MM-dd-yyyy"),
-                    DateTimeFormatter.ofPattern("MM.dd.yyyy")
-            );
-            // Tries to match the inputDate with the every DateTimeFormatter in list dateFormatters
-            for (DateTimeFormatter formatter : dateFormatters) {
-                try {
-                    return LocalDate.parse(date, formatter); // Attempts to return a parsed LocalDate
-                } catch (DateTimeParseException e) {
-                    // Tries the next format, ignoring the Exception
+        if (!date.isEmpty()) {
+            // Checks if input begins with an 'N' or 'n', and returns currentDate if so
+            if (Character.toUpperCase(date.charAt(0)) == 'N') {
+                LocalDate currentDate = LocalDate.now();
+                System.out.println("Date set as current date, " + currentDate);
+                return currentDate;
+            } else {
+                // Set of DateTimeFormatters for all supported delimiters
+                Set<DateTimeFormatter> dateFormatters = Set.of(
+                        // M/d/yy formats
+                        DateTimeFormatter.ofPattern("M/d/yy"),
+                        DateTimeFormatter.ofPattern("M-d-yy"),
+                        DateTimeFormatter.ofPattern("M.d.yy"),
+                        // M/d/yyyy formats
+                        DateTimeFormatter.ofPattern("M/d/yyyy"),
+                        DateTimeFormatter.ofPattern("M-d-yyyy"),
+                        DateTimeFormatter.ofPattern("M.d.yyyy"),
+                        // MM/dd/yy formats
+                        DateTimeFormatter.ofPattern("MM/dd/yy"),
+                        DateTimeFormatter.ofPattern("MM-dd-yy"),
+                        DateTimeFormatter.ofPattern("MM.dd.yy"),
+                        // MM/dd/yyyy formats
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy"),
+                        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+                        DateTimeFormatter.ofPattern("MM.dd.yyyy")
+                );
+                // Tries to match the inputDate with the every DateTimeFormatter in list dateFormatters
+                for (DateTimeFormatter formatter : dateFormatters) {
+                    try {
+                        return LocalDate.parse(date, formatter); // Attempts to return a parsed LocalDate
+                    } catch (DateTimeParseException e) {
+                        // Tries the next format, ignoring the Exception
+                    }
                 }
             }
         }
@@ -111,35 +113,37 @@ public class InputValidation {
      */
     public static LocalTime attemptParseTime(String time) {
 
-        // Checks if input begins with an 'N' or 'n', and returns currentTime if so
-        if (Character.toUpperCase(time.charAt(0)) == 'N') {
-            LocalTime currentTime = LocalTime.now();
-            System.out.println("Time set as current time, " + currentTime);
-            return currentTime;
-        } else {
-            // Set of DateTimeFormatters for all supported delimiters
-            Set<DateTimeFormatter> timeFormatters = Set.of(
-                    // 24-hour formatters
-                    DateTimeFormatter.ofPattern("H:mm"),
-                    DateTimeFormatter.ofPattern("HH:mm"),
-                    DateTimeFormatter.ofPattern("H-mm"),
-                    DateTimeFormatter.ofPattern("HH-mm"),
-                    DateTimeFormatter.ofPattern("H.mm"),
-                    DateTimeFormatter.ofPattern("HH.mm"),
-                    // 12-hour formatters with AM/PM
-                    DateTimeFormatter.ofPattern("h:mm a"),
-                    DateTimeFormatter.ofPattern("hh:mm a"),
-                    DateTimeFormatter.ofPattern("h-mm a"),
-                    DateTimeFormatter.ofPattern("hh-mm a"),
-                    DateTimeFormatter.ofPattern("h.mm a"),
-                    DateTimeFormatter.ofPattern("hh.mm a")
-            );
-            // Tries to match the inputTime with the every DateTimeFormatter in list timeFormatters
-            for (DateTimeFormatter formatter : timeFormatters) {
-                try {
-                    return LocalTime.parse(time, formatter); // Attempts to return a parsed LocalDate
-                } catch (DateTimeParseException e) {
-                    // Tries the next format, ignoring the Exception
+        if (!time.isEmpty()) {
+            // Checks if input begins with an 'N' or 'n', and returns currentTime if so
+            if (Character.toUpperCase(time.charAt(0)) == 'N') {
+                LocalTime currentTime = LocalTime.now().withNano(0);
+                System.out.println("Time set as current time, " + currentTime);
+                return currentTime;
+            } else {
+                // Set of DateTimeFormatters for all supported delimiters
+                Set<DateTimeFormatter> timeFormatters = Set.of(
+                        // 24-hour formatters
+                        DateTimeFormatter.ofPattern("H:mm"),
+                        DateTimeFormatter.ofPattern("HH:mm"),
+                        DateTimeFormatter.ofPattern("H-mm"),
+                        DateTimeFormatter.ofPattern("HH-mm"),
+                        DateTimeFormatter.ofPattern("H.mm"),
+                        DateTimeFormatter.ofPattern("HH.mm"),
+                        // 12-hour formatters with AM/PM
+                        DateTimeFormatter.ofPattern("h:mm a"),
+                        DateTimeFormatter.ofPattern("hh:mm a"),
+                        DateTimeFormatter.ofPattern("h-mm a"),
+                        DateTimeFormatter.ofPattern("hh-mm a"),
+                        DateTimeFormatter.ofPattern("h.mm a"),
+                        DateTimeFormatter.ofPattern("hh.mm a")
+                );
+                // Tries to match the inputTime with the every DateTimeFormatter in list timeFormatters
+                for (DateTimeFormatter formatter : timeFormatters) {
+                    try {
+                        return LocalTime.parse(time, formatter); // Attempts to return a parsed LocalDate
+                    } catch (DateTimeParseException e) {
+                        // Tries the next format, ignoring the Exception
+                    }
                 }
             }
         }
