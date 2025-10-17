@@ -18,21 +18,38 @@ A command-line Java application designed to manage and track financial transacti
 
 The application provides a comprehensive set of features accessible through a main menu and sub-menus:
 
-  * **Secure Login:** Uses a **passcode** to identify the user and load the correct ledger file (e.g., `transactions_JL.csv`).
-  * **Add Transaction:**
-      * **(D) Add Deposit:** Records income (positive amount).
-      * **(P) Add Payment:** Records expenses (negative amount).
-      * Supports entering the current date/time by typing **'N'** for "now".
-  * **View Ledger:** Allows displaying all entries or filtering by type.
-      * **(A)** Display all transactions.
-      * **(D)** Display only deposits.
-      * **(P)** Display only payments.
-  * **Reports Generation:** A dedicated menu for running filtered reports.
-      * **Default Reports:** Generate reports for Month to Date, Previous Month, Year to Date, and Previous Year.
-      * **Search by Vendor:** Filter transactions by a specific vendor name.
-      * **Custom Search:** Define a custom filter using a combination of date range, time range, description, vendor, and amount range (min/max).
-  * **Data Persistence:** Transactions are loaded from and saved back to a pipe-delimited CSV file (e.g., `transactions_JL.csv`).
-  * **Report Saving:** Any generated report can be saved to a new CSV file with a timestamp and report type in the filename.
+  * **Secure & Personalized Login:**
+
+      * Users log in by entering a **passcode** to identify their account.
+      * The application reads `passcodes.csv` to map the passcode to the user's name and dedicated ledger file (e.g., `transactions_JL.csv`).
+
+  * **Robust Transaction Management:**
+
+      * **Add Deposit (D) / Add Payment (P):** Allows users to record new income or expense transactions.
+      * **Input Validation:** Collects and validates date, time, description, vendor, and amount inputs. It supports multiple date and time formats and non-empty strings.
+      * **"Now" Option:** Users can enter **'N'** to automatically use the current system date and time for the transaction.
+      * **Amount Normalization:** The system automatically adjusts the amount to be **positive for deposits** and **negative for payments**, regardless of the user's input sign.
+      * **Confirmation & Insertion:** New transactions are displayed for **user review and confirmation** before being added to the ledger.
+      * **Chronological Ordering:** Transactions are inserted into the ledger in **precise chronological order** (date and time).
+
+  * **Data Structure & Persistence:**
+
+      * **Transaction Model:** Data is encapsulated in a `Transaction` object, which stores the date (`LocalDate`), time (`LocalTime`), description, vendor, and amount (`double`).
+      * **Pipe-Delimited CSV:** All ledger files use a simple, **pipe-delimited format** (`date|time|description|vendor|amount`).
+      * **Dynamic Saving:** New transactions are immediately written to the corresponding CSV file. If a transaction is not the most recent, the entire file is **rewritten** to maintain reverse chronological order in the file.
+
+  * **Ledger Viewing & Reporting:**
+
+      * **Display All (A):** Shows all entries in the ledger, ordered from **newest to earliest**.
+      * **Filter by Type (D/P):** Filters the display to show only deposits or only payments.
+      * **Default Reports (1-4):** Provides one-click reports for predefined periods: Month to Date, Previous Month, Year to Date, and Previous Year.
+      * **Search by Vendor (5):** Runs a report filtered exclusively by a vendor name specified by the user.
+      * **Custom Search (6):** Allows fine-grained filtering based on multiple criteria:
+          * **Date Range** (start/end).
+          * **Time Range** (start/end).
+          * **Description/Vendor** (case-insensitive, partial string match).
+          * **Amount Range** (minimum and maximum value).
+      * **Report Saving:** Any generated report (filtered view) can be optionally saved as a new CSV file, with the filename including a timestamp and the report type.
 
 -----
 
