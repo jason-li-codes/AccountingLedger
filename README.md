@@ -85,13 +85,13 @@ Upon launching, the application will prompt you to select a ledger file by enter
 
 | Passcode | Name | Ledger File |
 | :---: | :---: | :---: |
-| `12345` | Jason Li | `transactions_JL.csv` |
-| `23456` | Ashley Mendez | `transactions_AM.csv` |
-| `34567` | Jazzy Germosen | `transactions_JG.csv` |
-| `45678` | Alwin Zhao | `transactions_AZ.csv` |
-| `56789` | Ahsan Baseer | `transactions_AB.csv` |
-| `67890` | Harman Singh | `transactions_HS.csv` |
-| `78901` | Andy Ariza | `transactions_AA.csv` |
+| `12345` | `transactions_JL.csv` |
+| `23456` | `transactions_AM.csv` |
+| `34567` | `transactions_JG.csv` |
+| `45678` | `transactions_AZ.csv` |
+| `56789` | `transactions_AB.csv` |
+| `67890` | `transactions_HS.csv` |
+| `78901` | `transactions_AA.csv` |
 
 *Example:* Enter `12345` to load `transactions_JL.csv`.
 
