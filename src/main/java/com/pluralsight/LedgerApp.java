@@ -3,6 +3,7 @@ package com.pluralsight;
 import java.util.*;
 
 // Imports UtilizedMethods class, which contains bulk of code
+import static com.pluralsight.InputValidation.getValidString;
 import static com.pluralsight.UtilizedMethods.*;
 
 /**
@@ -46,7 +47,7 @@ public class LedgerApp {
                     (I) More info
                     (X) Exit program""");
             // Reads user input and converts to uppercase
-            char mainMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
+            char mainMenuOption = Character.toUpperCase(getValidString().charAt(0));
             switch (mainMenuOption) {
                 case 'D': // Adds a deposit transaction
                     addTransaction("deposit");
@@ -87,9 +88,8 @@ public class LedgerApp {
                     (P) Display only payments
                     (R) Run reports
                     (H) Back to main menu""");
-
-            char ledgerMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
-
+            // Reads user input and converts to uppercase
+            char ledgerMenuOption = Character.toUpperCase(getValidString().charAt(0));
             switch (ledgerMenuOption) {
                 case 'A': // Displays all transactions
                     displayEntries(openLedger);
@@ -118,10 +118,10 @@ public class LedgerApp {
      * search by vendor, or run a custom report.
      */
     public static void viewReportsMenu() {
-
         // Reports submenu loop
         boolean isRunning = true;
         while (isRunning) {
+
             System.out.println("""
                     ================== REPORTS MENU ==================
                     What report would you like to run?
@@ -132,9 +132,8 @@ public class LedgerApp {
                     (5) Search by vendor
                     (6) Custom search
                     (7) Back to ledger menu""");
-
-            char reportsMenuOption = Character.toUpperCase(input.nextLine().trim().charAt(0));
-
+            // Reads user input and converts to uppercase
+            char reportsMenuOption = Character.toUpperCase(getValidString().charAt(0));
             switch (reportsMenuOption) {
                 case '1': // Runs report for current month up to today
                     runReportDefault("monthToDate");
