@@ -11,6 +11,10 @@ A command-line Java application designed to manage and track financial transacti
   * [Setup & Installation](#-setup--installation)
   * [Project Structure](#-project-structure)
   * [Application Screens](#%EF%B8%8F-application-screens)
+      * [Main Menu](#main-menu)
+      * [Ledger Menu](#ledger-menu)
+      * [Reports Menu](#reports-menu)
+      * [Example Report Output (Displaying All Entries)](#example-report-output-displaying-all-entries)
   * [Code Highlight: Dynamic Filtering with Streams](#-code-highlight-dynamic-filtering-with-streams)
   * [Usage](#-usage)
 
@@ -137,7 +141,7 @@ Please select an option from the following menu:
 (X) Exit program
 ```
 
-### Ledger View Menu
+### Ledger Menu
 
 Selecting `(L) View ledger` from the main menu opens this submenu, allowing the user to view transactions or run reports.
 
