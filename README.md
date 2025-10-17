@@ -10,7 +10,12 @@ A command-line Java application designed to manage and track financial transacti
   * [Technologies](#%EF%B8%8F-technologies)
   * [Setup & Installation](#-setup--installation)
   * [Project Structure](#-project-structure)
-  * [Code Highlight: Dynamic Filtering with Streams](#-interesting-code-dynamic-filtering-with-streams)
+  * [Application Screens](#%EF%B8%8F-application-screens)
+      * [Main Menu](#main-menu)
+      * [Ledger Menu](#ledger-menu)
+      * [Reports Menu](#reports-menu)
+      * [Example Report Output (Displaying All Entries)](#example-report-output-displaying-all-entries)
+  * [Code Highlight: Dynamic Filtering with Streams](#-code-highlight-dynamic-filtering-with-streams)
   * [Usage](#-usage)
 
 -----
@@ -116,8 +121,76 @@ AccountingLedger/
                     ├── Transaction.java      // The data model class for a single financial transaction
                     └── UtilizedMethods.java  // Contains core application logic, e.g. file loading, report generation
 ```
+-----
 
-## 🔍 Interesting Code: Dynamic Filtering with Streams
+## 🖥️ Application Screens
+
+The application is entirely command-line driven, presenting a series of nested menus for navigation.
+
+### Main Menu
+
+This is the first menu displayed after a successful login.
+
+```
+================== MAIN MENU ==================
+Please select an option from the following menu:
+(D) Add deposit
+(P) Add payment
+(L) View ledger
+(I) More info
+(X) Exit program
+```
+
+### Ledger Menu
+
+Selecting `(L) View ledger` from the main menu opens this submenu, allowing the user to view transactions or run reports.
+
+```
+================== LEDGER MENU ==================
+Which entries would you like to see?
+(A) Display all entries
+(D) Display only deposits
+(P) Display only payments
+(R) Run reports
+(H) Back to main menu
+```
+
+### Reports Menu
+
+Selecting `(R) Run reports` from the Ledger View Menu displays the available report options, which include default periods and custom searches.
+
+```
+================== REPORTS MENU ==================
+What report would you like to run?
+(1) Month to date
+(2) Previous month
+(3) Year to date
+(4) Previous year
+(5) Search by vendor
+(6) Custom search
+(7) Back to ledger menu
+```
+
+### Example Report Output (Displaying All Entries)
+
+The `displayEntries` method generates a tabular, formatted list of transactions. Since the ledger is loaded in reverse chronological order (newest first), the report displays transactions from newest to oldest.
+
+```
+Searching....
+Date         Time       Description                             Vendor              Amount
++------------+----------+---------------------------------------+--------------------+--------------+
+|2024-08-25  |13:10:11  |payment received                       |PayPal              |      500.00|
+|2024-08-10  |07:45:10  |coffee                                 |Starbucks           |       -5.45|
+|2024-07-26  |16:30:41  |music subscription                     |Spotify             |       -9.99|
+|2024-07-11  |09:55:55  |groceries                              |Walmart             |      -78.50|
++------------+----------+---------------------------------------+--------------------+--------------+
+Searching complete.
+Returning to previous menu....
+```
+
+-----
+
+## 🔍 Code Highlight: Dynamic Filtering with Streams
 
 The `runReportCustom` method in `UtilizedMethods.java` demonstrates a clean and efficient way to handle complex, optional filtering using **Java Streams**. This single block of code handles all seven possible filtering parameters (date range, time range, description, vendor, and amount range).
 
@@ -165,20 +238,8 @@ Upon launching, the application will prompt you to select a ledger file by enter
 
 *Example:* Enter `12345` to load `transactions_JL.csv`.
 
-### 2\. Main Menu
 
-After a successful login, the main menu is displayed:
-
-```
-Please select an option from the following menu:
-(D) Add deposit
-(P) Add payment
-(L) View ledger
-(I) More info
-(X) Exit program
-```
-
-### 3\. Ledger File Format
+### 2\. Ledger File Format
 
 The ledger files (e.g., `transactions_JL.csv`) are pipe-delimited (`|`) and use the following header:
 
