@@ -32,8 +32,6 @@ public class Transaction {
         this.amount = amount;
     }
 
-    // === Getters and Setters ===
-
     /**
      * Returns the date of the transaction.
      *
