@@ -22,7 +22,6 @@ public class InputValidation {
 
         // Initializes LocalDate inputDate
         LocalDate inputDate = null;
-
         // Uses do/while loop with a boolean badInput to get a valid date from the user, calling on attemptParseDate
         // method, which returns null and tries with new user input
         boolean badInput = false;
@@ -96,7 +95,6 @@ public class InputValidation {
 
         // initializes LocalTime inputTime
         LocalTime inputTime = null;
-
         // Uses do/while loop with a boolean badInput to get a valid time from the user, calling on attemptParseTime
         // method, which returns null and tries with new user input
         boolean badInput = false;
@@ -169,7 +167,6 @@ public class InputValidation {
         // Initializes inputDouble as null
         String userInputDouble = null;
         Double inputDouble = null;
-
         // Uses do/while loop with a boolean badInput to get a valid double from the user, calling on attemptParseDouble
         // method, which returns null and tries with new user input
         boolean badInput = false;
