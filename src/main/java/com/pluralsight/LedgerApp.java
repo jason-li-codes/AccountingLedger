@@ -38,6 +38,7 @@ public class LedgerApp {
         while (isRunning) {
 
             System.out.println("""
+                    ================== MAIN MENU ==================
                     Please select an option from the following menu:
                     (D) Add deposit
                     (P) Add payment
@@ -79,6 +80,7 @@ public class LedgerApp {
         while (isRunning) {
 
             System.out.println("""
+                    ================== LEDGER MENU ==================
                     Which entries would you like to see?
                     (A) Display all entries
                     (D) Display only deposits
@@ -121,6 +123,7 @@ public class LedgerApp {
         boolean isRunning = true;
         while (isRunning) {
             System.out.println("""
+                    ================== REPORTS MENU ==================
                     What report would you like to run?
                     (1) Month to date
                     (2) Previous month
