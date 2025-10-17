@@ -21,23 +21,85 @@ A command-line Java application designed to manage and track financial transacti
 
 ## ✨ Features
 
-The application provides a comprehensive set of features accessible through a main menu and sub-menus:
+🔐 Secure Login
 
-  * **Secure Login:** Uses a **passcode** to identify the user and load the correct ledger file (e.g., `transactions_JL.csv`).
-  * **Add Transaction:**
-      * **(D) Add Deposit:** Records income (positive amount).
-      * **(P) Add Payment:** Records expenses (negative amount).
-      * Supports entering the current date/time by typing **'N'** for "now".
-  * **View Ledger:** Allows displaying all entries or filtering by type.
-      * **(A)** Display all transactions.
-      * **(D)** Display only deposits.
-      * **(P)** Display only payments.
-  * **Reports Generation:** A dedicated menu for running filtered reports.
-      * **Default Reports:** Generate reports for Month to Date, Previous Month, Year to Date, and Previous Year.
-      * **Search by Vendor:** Filter transactions by a specific vendor name.
-      * **Custom Search:** Define a custom filter using a combination of date range, time range, description, vendor, and amount range (min/max).
-  * **Data Persistence:** Transactions are loaded from and saved back to a pipe-delimited CSV file (e.g., `transactions_JL.csv`).
-  * **Report Saving:** Any generated report can be saved to a new CSV file with a timestamp and report type in the filename.
+Users authenticate using a passcode, which is mapped to a specific ledger file (e.g., transactions_JL.csv).
+
+This ensures that only the correct ledger is loaded for each individual user.
+
+➕ Add Transactions
+
+Users can add new transactions through the main menu:
+
+(D) Add Deposit: Records an incoming transaction (positive amount).
+
+(P) Add Payment: Records an outgoing transaction (negative amount).
+
+Users can specify a custom date or enter N to auto-fill the current date and time.
+
+📋 View Ledger
+
+View and filter transactions using the ledger menu:
+
+(A) Show all transactions.
+
+(D) Show only deposits.
+
+(P) Show only payments.
+
+(R) Access the Reports Menu for advanced reporting.
+
+(H) Return to the Main Menu.
+
+📊 Reports Generation
+
+Generate detailed financial reports using several filtering options:
+
+Default Reports:
+
+(1) Month to Date
+
+(2) Previous Month
+
+(3) Year to Date
+
+(4) Previous Year
+
+Search by Vendor:
+
+(5) Filter transactions by a specific vendor name (e.g., “Amazon”).
+
+Custom Search:
+
+(6) Define your own filters:
+
+Date range
+
+Time range
+
+Description keywords
+
+Vendor
+
+Amount range (minimum and/or maximum)
+
+(7) Return to Ledger Menu
+
+💾 Data Persistence
+
+Transactions are stored in a pipe-delimited CSV file (e.g., transactions_JL.csv).
+
+Files are loaded at login and saved upon transaction addition or report generation.
+
+Ensures data is preserved between sessions.
+
+📝 Report Exporting
+
+Every generated report can be saved as a new CSV file, automatically named with:
+
+A timestamp
+
+The type of report (e.g., yearToDate_20251015_1430_Transactions_JL.csv)
 
 -----
 
@@ -66,6 +128,15 @@ The application provides a comprehensive set of features accessible through a ma
     Use Maven to compile the Java code and package it into an executable JAR file.
     ```bash
     mvn clean package
+    ```
+3. **Project Structure:**
+   ```bash
+   com/
+└── pluralsight/
+    ├── LedgerApp.java          # Main application entry point
+    ├── Transaction.java        # Transaction object class (not shown here)
+    ├── UtilizedMethods.java    # Utility methods for input, loading/saving, reporting
+    └── transactions_XX.csv     # Ledger files per user (pipe-delimited CSV)
     ```
 
 ### Running the Application
