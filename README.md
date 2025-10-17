@@ -6,71 +6,51 @@ A command-line Java application designed to manage and track financial transacti
 
 ## 📑 Table of Contents
 
-  * [Features](https://www.google.com/search?q=%23features)
-  * [Technologies](https://www.google.com/search?q=%23technologies)
-  * [Setup & Installation](https://www.google.com/search?q=%23setup--installation)
-      * [Prerequisites](https://www.google.com/search?q=%23prerequisites)
-      * [Building the Project](https://www.google.com/search?q=%23building-the-project)
-      * [Running the Application](https://www.google.com/search?q=%23running-the-application)
-  * [Usage](https://www.google.com/search?q=%23usage)
-      * [1. Initial Access](https://www.google.com/search?q=%231-initial-access)
-      * [2. Main Menu](https://www.google.com/search?q=%232-main-menu)
-      * [3. Ledger File Format](https://www.google.com/search?q=%233-ledger-file-format)
+  * [Features](#-features)
+  * [Technologies](#%EF%B8%8F-technologies)
+  * [Setup & Installation](#-setup--installation)
+  * [Project Structure](#-project-structure)
+  * [Code Highlight: Dynamic Filtering with Streams](#-interesting-code-dynamic-filtering-with-streams)
+  * [Usage](#-usage)
 
 -----
 
 ## ✨ Features
 
-### 🔐 Secure Login
-- Users authenticate using a **passcode**, which is mapped to a specific ledger file (e.g., `transactions_JL.csv`).
-- This ensures that only the correct ledger is loaded for each individual user.
+The application provides a comprehensive set of features accessible through a main menu and sub-menus:
 
-### ➕ Add Transactions
-- Users can add new transactions through the main menu:
-  - **(D) Add Deposit:** Records an incoming transaction (positive amount).
-  - **(P) Add Payment:** Records an outgoing transaction (negative amount).
-- Users can specify a custom date or enter **`N`** to auto-fill the current date and time.
+  * **Secure & Personalized Login:**
 
-### 📋 View Ledger
-View and filter transactions using the ledger menu:
-- **(A)** Show **all** transactions.
-- **(D)** Show **only deposits**.
-- **(P)** Show **only payments**.
-- **(R)** Access the **Reports Menu** for advanced reporting.
-- **(H)** Return to the **Main Menu**.
+      * Users log in by entering a **passcode** to identify their account.
+      * The application reads `passcodes.csv` to map the passcode to the user's name and dedicated ledger file (e.g., `transactions_JL.csv`).
 
-### 📊 Reports Generation
-Generate detailed financial reports using several filtering options:
+  * **Robust Transaction Management:**
 
-#### Default Reports
-- **(1)** Month to Date
-- **(2)** Previous Month
-- **(3)** Year to Date
-- **(4)** Previous Year
+      * **Add Deposit (D) / Add Payment (P):** Allows users to record new income or expense transactions.
+      * **Input Validation:** Collects and validates date, time, description, vendor, and amount inputs. It supports multiple date and time formats and non-empty strings.
+      * **"Now" Option:** Users can enter **'N'** to automatically use the current system date and time for the transaction.
+      * **Amount Normalization:** The system automatically adjusts the amount to be **positive for deposits** and **negative for payments**, regardless of the user's input sign.
+      * **Confirmation & Insertion:** New transactions are displayed for **user review and confirmation** before being added to the ledger.
+      * **Chronological Ordering:** Transactions are inserted into the ledger in **precise chronological order** (date and time).
 
-#### Advanced Filtering
-- **(5)** Search by Vendor: Filter transactions by a specific vendor name (e.g., “Amazon”).
-- **(6)** Custom Search: Define your own filters:
-  - Date range
-  - Time range
-  - Description keywords
-  - Vendor
-  - Amount range (min/max)
+  * **Data Structure & Persistence:**
 
-- **(7)** Return to Ledger Menu
+      * **Transaction Model:** Data is encapsulated in a `Transaction` object, which stores the date (`LocalDate`), time (`LocalTime`), description, vendor, and amount (`double`).
+      * **Pipe-Delimited CSV:** All ledger files use a simple, **pipe-delimited format** (`date|time|description|vendor|amount`).
+      * **Dynamic Saving:** New transactions are immediately written to the corresponding CSV file. If a transaction is not the most recent, the entire file is **rewritten** to maintain reverse chronological order in the file.
 
-### 💾 Data Persistence
-- Transactions are stored in a **pipe-delimited CSV** file (e.g., `transactions_JL.csv`).
-- Files are **loaded at login** and **saved upon transaction addition** or **report generation**.
-- Ensures data is preserved between sessions.
+  * **Ledger Viewing & Reporting:**
 
-### 📝 Report Exporting
-- Every generated report can be saved as a **new CSV file**, automatically named with:
-  - A timestamp
-  - The type of report  
-  (e.g., `yearToDate_20251015_1430_Transactions_JL.csv`)
-
----
+      * **Display All (A):** Shows all entries in the ledger, ordered from **newest to earliest**.
+      * **Filter by Type (D/P):** Filters the display to show only deposits or only payments.
+      * **Default Reports (1-4):** Provides one-click reports for predefined periods: Month to Date, Previous Month, Year to Date, and Previous Year.
+      * **Search by Vendor (5):** Runs a report filtered exclusively by a vendor name specified by the user.
+      * **Custom Search (6):** Allows fine-grained filtering based on multiple criteria:
+          * **Date Range** (start/end).
+          * **Time Range** (start/end).
+          * **Description/Vendor** (case-insensitive, partial string match).
+          * **Amount Range** (minimum and maximum value).
+      * **Report Saving:** Any generated report (filtered view) can be optionally saved as a new CSV file, with the filename including a timestamp and the report type.
 
 -----
 
@@ -110,14 +90,71 @@ Generate detailed financial reports using several filtering options:
 
 -----
 
+## 📁 Project Structure
+
+This project follows the standard Maven project layout (`src/main/java`) and includes several CSV files at the root level for application data.
+
+```
+AccountingLedger/
+├── .gitignore
+├── pom.xml
+├── passcodes.csv                 // Maps passcodes to ledger files and user names
+├── transactions_AA.csv           // Example ledger data for user AA
+├── transactions_AB.csv           // Example ledger data for user AB
+├── transactions_AM.csv           // Example ledger data for user AM
+├── transactions_AZ.csv           // Example ledger data for user AZ
+├── transactions_HS.csv           // Example ledger data for user HS
+├── transactions_JG.csv           // Example ledger data for user JG
+├── transactions_JL.csv           // Example ledger data for user JL
+└── src/
+    └── main/
+        └── java/
+            └── com/
+                └── pluralsight/
+                    ├── InputValidation.java  // Methods for robust user input parsing and validation
+                    ├── LedgerApp.java        // The main class containing entry point (main method) and menu logic
+                    ├── Transaction.java      // The data model class for a single financial transaction
+                    └── UtilizedMethods.java  // Contains core application logic, e.g. file loading, report generation
+```
+
+## 🔍 Interesting Code: Dynamic Filtering with Streams
+
+The `runReportCustom` method in `UtilizedMethods.java` demonstrates a clean and efficient way to handle complex, optional filtering using **Java Streams**. This single block of code handles all seven possible filtering parameters (date range, time range, description, vendor, and amount range).
+
+The key is the structure of the `filter` condition: `(parameter == null || condition)`. If the search parameter is null (meaning the user didn't specify a filter for that field), the stream condition is always `true`, and the transactions are passed through. If the parameter is present, the specific condition is applied.
+
+```java
+// Snippet from UtilizedMethods.java
+public static void runReportCustom(String type, LocalDate startDate, LocalDate endDate, LocalTime startTime,
+                                       LocalTime endTime, String description, String vendor,
+                                       Double amountMin, Double amountMax) {
+        // Filters ledger using the provided parameters
+        ArrayList<Transaction> filteredLedger = (ArrayList<Transaction>) openLedger.stream()
+                .filter(t -> (startDate == null || !t.getTransactionDate().isBefore(startDate)) &&
+                        (endDate == null || !t.getTransactionDate().isAfter(endDate))) // Filters by date range
+                .filter(t -> (startTime == null || !t.getTransactionTime().isBefore(startTime)) &&
+                        (endTime == null || !t.getTransactionTime().isAfter(endTime))) // Filters by time range
+                .filter(t -> (description == null || description.isEmpty() ||
+                        t.getDescription().toLowerCase().contains(description)))  // Filters by description
+                .filter(t -> (vendor == null || vendor.isEmpty() ||
+                        t.getVendor().toLowerCase().contains(vendor))) // Filters by vendor
+                .filter(t -> (amountMin == null || t.getAmount() >= amountMin))
+                .filter(t -> (amountMax == null || t.getAmount() <= amountMax)) // Filters by amount
+                .collect(Collectors.toCollection(ArrayList::new)); // Collects filtered results into ArrayList
+        // ... rest of method
+}
+```
+
+-----
+
 ## 💡 Usage
 
 ### 1\. Initial Access
 
 Upon launching, the application will prompt you to select a ledger file by entering a **passcode**.
 
-| Passcode | Name | Ledger File |
-| :---: | :---: | :---: |
+| Passcode | Ledger File |
+| :---: | :---: | 
 | `12345` | `transactions_JL.csv` |
 | `23456` | `transactions_AM.csv` |
 | `34567` | `transactions_JG.csv` |
