@@ -8,8 +8,8 @@ A command-line Java application designed to manage and track financial transacti
 
   * [Features](#-features)
   * [Technologies](#-technologies)
-  * [Setup & Installation](#-setup-&-Installation)
-  * [Project Structure](#-project-Structure)
+  * [Setup and Installation](#-setup-and-installation)
+  * [Project Structure](#-project-structure)
   * [Usage](#-usage)
 
 -----
